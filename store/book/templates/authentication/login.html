@@ -1,0 +1,46 @@
+{% extends 'layout/base.html' %}
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <h1 class="display-1 mt-5 p-5 text-center">Libro.</h1>
+      <div class="col-5 mx-auto">
+        <h3 class="m-2">Login</h3>
+        <form method="post">
+          {% csrf_token %}
+          <div class="form-outline mb-4">
+            <input type="text" name="username" class="form-control" required />
+            <label class="form-label">Username</label>
+          </div>
+          <div class="form-outline mb-4">
+            <input type="password" name="password" class="form-control" required />
+            <label class="form-label">Password</label>
+          </div>
+          <div class="row mb-4">
+            <div class="col">
+              <a href="#!">Forgot password?</a>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block mb-4">Sign in</button>
+          <div class="text-center">
+            <p>
+              Not a member? <a href="/register">Register</a>
+            </p>
+            <p>or sign up with:</p>
+            <button type="button" class="btn btn-link btn-floating mx-1"><i class="fab fa-facebook-f"></i></button>
+
+            <button type="button" class="btn btn-link btn-floating mx-1"><i class="fab fa-google"></i></button>
+
+            <button type="button" class="btn btn-link btn-floating mx-1"><i class="fab fa-twitter"></i></button>
+
+            <button type="button" class="btn btn-link btn-floating mx-1"><i class="fab fa-github"></i></button>
+          </div>
+        </form>
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert alert-danger" role="alert">{{ message }}</div>
+          {% endfor %}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}
