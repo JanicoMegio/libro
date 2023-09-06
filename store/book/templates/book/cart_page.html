@@ -1,0 +1,117 @@
+{% extends 'layout/base.html' %}
+
+{% block title %}{{user.username }} | Cart{%endblock title%}
+{% block content %} 
+<section class="h-100 h-custom" style="font-size: 1.2rem;">  
+  <div class="container h-100 py-5">
+     <a href="/store-page"><i class="fas fa-circle-arrow-left fa-2x"></i></a>
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col">
+        {% if items %}
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col" class="h5">Shopping Bag</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Price</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            {% for item in items %}
+            <tbody>
+              <tr>
+                <th scope="row">
+                  <div class="d-flex align-items-center">
+                    <img
+                      src="{{ item.book_title.image.url }}"
+                      class="img-fluid rounded-3"
+                      style="width: 120px"
+                      alt="Book"
+                    />
+                    <div class="flex-column ms-4">
+                      <p class="mb-2">{{ item.book_title }}</p>
+                      {% for author in item.book_title.status.all %}
+                      <p class="mb-0">{{ author }}</p>
+                      {% endfor %}
+                    </div>
+                  </div>
+                </th>
+                <td class="align-middle">
+                  <form class="d-flex flex-row">
+                    {% csrf_token %}
+                    <a
+                      class="btn btn-link px-2"
+                      href="{% url 'minus-item' item.id %}"
+                    >
+                      <i class="fas fa-minus"></i>
+                    </a>
+                    <input
+                      min="1"
+                      name="quantity-input"
+                      value="{{item.quantity}}"
+                      type="number"
+                      class="form-control form-control-sm"
+                      style="width: 50px"
+                      readonly
+                    />
+
+                    <a
+                      class="btn btn-link px-2"
+                      href="{% url 'plus-item' item.id %}"
+                    >
+                      <i class="fas fa-plus"></i>
+                    </a>
+                  </form>
+                </td>
+                <td class="align-middle">
+                  <p class="mb-0" style="font-weight: 500">
+                    ${{item.total_cart_items}}
+                  </p>
+                </td>
+                <td class="align-middle">
+                <a href="{% url 'delete-item' item.pk %}"><i class="fas fa-xmark fa-lg"></i></a>
+                </td>
+              </tr>
+            </tbody>
+            {% endfor %}
+          </table>
+        </div>
+          <div class="col-lg-4 col-xl-4 float-end ">
+            <div class="d-flex justify-content-between" style="font-weight: 500;">
+              <p class="mb-2">Subtotal</p>
+              <p class="mb-2">${{total|floatformat:2}}</p>
+            </div>
+
+            <div class="d-flex justify-content-between" style="font-weight: 500;">
+              <p class="mb-0">Shipping Fee</p>
+              <p class="mb-0">$2.99</p>
+            </div>
+
+            <hr class="my-4">
+
+            <div class="d-flex justify-content-between mb-4" style="font-weight: 500;">
+              <p class="mb-2">Total (tax included)</p>
+              <p class="mb-2">${{total|floatformat:2}}</p>
+            </div>
+
+            <a href="{% url 'checkout-item' %}" class="btn btn-primary btn-block btn-lg">
+              <div class="d-flex justify-content-between">
+                <span>Checkout</span>
+                <span>$ {{total|floatformat:2}}</span>
+              </div>
+            </a>
+
+          </div>
+        {% else %}
+        <div class="text-center mb-5">
+            <h2>Your Cart is Empty!</h2>
+            <i class="fas fa-cart-shopping fa-5x"></i>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock content %}
+

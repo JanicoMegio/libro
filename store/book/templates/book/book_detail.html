@@ -1,0 +1,94 @@
+{% extends 'layout/base.html' %}
+{% block header %}
+<style>
+    .checked {
+        color: orange;
+    }
+</style>
+{% endblock header %}
+{% block content %}
+<form method="post" class="container bg-white mt-5 mt-sm-2 mt-md-4">
+    {% csrf_token %}
+    <div class="container pt-0 px-5 pb-5">
+        <div class="row">
+            <div class="container m-4">
+                <a href="/store-page"><i class="far fa-circle-left fa-2x"></i></a>
+            </div>
+        </div>
+        <div class="row ">
+        {% for book in books%}
+        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+            <div class="image-container align-items-sm-center" style="max-width: 400px">
+                <img class="img-fluid" src="{{book.image.url}}">
+            </div>
+        </div>
+        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+            <h1>{{book.title}}</h1>
+            {% for author in book.book_author.all %}
+            <h4>{{author}}</h4>
+            {% endfor %}
+            <p>{{book.description}}</p>
+           
+            <div class="rating">
+                <h5>Rating</h5>
+                <span class="fa fa-star checked"></span>
+                <span class="fa fa-star checked"></span>
+                <span class="fa fa-star checked"></span>
+                <span class="fa fa-star"></span>
+                <span class="fa fa-star"></span>
+            </div>
+
+            <div class="container-info m-2 p-2">
+                <div class="row">
+                    <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
+                        <div class="card-header bg-transparent border-0 d-flex justify-content-center">
+                            <i class="far fa-file fa-2x"></i>
+                        </div>
+                        <div class="card-body text-center">
+                            <h6 class="card-title">240 pages</h6>
+                            <p class="card-text">Print length</p>
+                        </div>
+
+                    </div>
+                    <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
+                        <div class="card-header bg-transparent border-0 d-flex justify-content-center">
+                            <i class="fas fa-language fa-2x"></i>
+                        </div>
+                        <div class="card-body text-center">
+                            <h6 class="card-title">English</h6>
+                            <p class="card-text">Language</p>
+                        </div>
+                        
+                    </div>
+                    <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
+                        <div class="card-header bg-transparent border-0 d-flex justify-content-center">
+                            <i class="far fa-calendar-days fa-2x"></i>
+                        </div>
+                        <div class="card-body text-center">
+                            <h6 class="card-title">{{book.published}}</h6>
+                            <p class="card-text">Pub. Date</p>
+                        </div>
+                        
+                    </div>
+                    <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
+                        <div class="card-header bg-transparent border-0 d-flex justify-content-center">
+                            <i class="fas fa-ruler-combined fa-2x"></i>
+                        </div>
+                        <div class="card-body text-center">
+                            <h6 class="card-title">5.5 x 1 x 8.5</h6>
+                            <p class="card-text">Dimensions</p>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+            <div class="container d-flex justify-content-end mt-5 p-4 align-items-sm-center">
+                <a href="{% url 'add-to-cart' book.id %}" class="btn btn-dark">Add to cart</a>
+            </div>
+          
+        </div>
+        {% endfor %}
+    </div>
+    </div>
+</form>
+{% endblock %}
