@@ -1,40 +1,47 @@
 {% extends 'layout/base.html' %}
+{% block title %}Store{% endblock %}
 {% block content %}
-{% include 'layout/store-navbar.html'%}
-  <div class="container mx-auto">
+  <div class="container mx-auto mt-3">
     <div class="container">
-      <div class="row row-cols-3 g-4">
-        {% for book in books %}
-          <div class="col mt-5">
-            <div class="card mb-3 hover-shadow" style="max-width: 540px;">
-              <div class="row g-0">
-                <div class="col-12">
-                  <img src="https://placehold.co/600x400" alt="Books" class="img-fluid rounded-top" />
-                </div>
-                <div class="col-md-12">
-                  <div class="card-body">
-                    <h5 class="card-title">{{ book.title }}</h5>
-                    <p class="card-text">
-                      <small class="text-muted">{{ book.description }}</small>
-                    </p>
-                    <ul class="list-group list-group-light list-group-small">
-                      {% for author in book.book_author.all %}
-                        <li class="list-group-item px-4">{{ author }}</li>
+      <h1 class="m-4">Best Seller</h1>
+      <div class="row">
+          {% csrf_token %}
+          {% for book in page %}
+          <div class="col-sm-12 col-md-6 col-lg-2">
+            <div class="card">
+                  <img src="{{ book.image.url }}" alt="Books" class="img-fluid rounded-top p-2 hover-shadow" />
+                  <div class="card-body p-2">
+                    <h5 class="card-title text-capitalize">{{ book.title }}</h5>
+                    {% for author in book.book_author.all %}
+                        <p>By: {{ author }}</p>
                       {% endfor %}
-                      <li class="list-group-item px-4">{{ book.published }}</li>
-                      <li class="list-group-item px-4">$ {{ book.price }}</li>
-                    </ul>
-                    <div class="card-body">
-                      <a href="#" class="btn btn-warning card-link">Buy</a>
-                      <a href="#" class="btn btn-secondary card-link">View</a>
-                    </div>
+                       <div class="rating">
+                          <span class="fa fa-star checked"></span>
+                          <span class="fa fa-star checked"></span>
+                          <span class="fa fa-star checked"></span>
+                          <span class="fa fa-star"></span>
+                          <span class="fa fa-star"></span>
+                        </div>
+                      <a href="{% url 'book-detail' book.id %}" class="btn btn-secondary card-link">View Details</a>
                   </div>
-                </div>
-              </div>
             </div>
           </div>
-        {% endfor %}
-      </div>
+        {% endfor %}  
+        </div>
     </div>
-  </div>
+      <div class="pagination m-3">
+        <span class="step-links">
+            {% if page.has_previous %}
+                <a href="?page=1" class="btn"><i class="fas fa-angles-left"></i> First</a>
+                <a href="?page={{ page.previous_page_number }}" class="btn"><i class="fas fa-angle-left"></i> Previous</a>
+            {% endif %}
+            <span class="current-page"><i class="fas">{{ page.number }}</i></span>
+            {% if page.has_next %}
+                <a href="?page={{ page.next_page_number }}" class="btn">Next <i class="fas fa-angle-right"></i></a>
+                <a href="?page={{ page.paginator.num_pages }}" class="btn">Last  <i class="fas fa-angles-right"></i></a>
+            {% endif %}
+        </span>
+      </div>
+</div>
+{% include 'layout/footer.html' %}
 {% endblock %}
