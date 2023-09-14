@@ -1,4 +1,5 @@
 {% extends 'layout/base.html' %}
+
 {% block header %}
 <style>
     .checked {
@@ -6,89 +7,297 @@
     }
 </style>
 {% endblock header %}
+
 {% block content %}
-<form method="post" class="container bg-white mt-5 mt-sm-2 mt-md-4">
-    {% csrf_token %}
-    <div class="container pt-0 px-5 pb-5">
-        <div class="row">
-            <div class="container m-4">
-                <a href="/store-page"><i class="far fa-circle-left fa-2x"></i></a>
-            </div>
-        </div>
-        <div class="row ">
-        {% for book in books%}
-        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
-            <div class="image-container align-items-sm-center" style="max-width: 400px">
-                <img class="img-fluid" src="{{book.image.url}}">
-            </div>
-        </div>
-        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
-            <h1>{{book.title}}</h1>
-            {% for author in book.book_author.all %}
-            <h4>{{author}}</h4>
-            {% endfor %}
-            <p>{{book.description}}</p>
-           
-            <div class="rating">
-                <h5>Rating</h5>
-                <span class="fa fa-star checked"></span>
-                <span class="fa fa-star checked"></span>
-                <span class="fa fa-star checked"></span>
-                <span class="fa fa-star"></span>
-                <span class="fa fa-star"></span>
-            </div>
 
-            <div class="container-info m-2 p-2">
-                <div class="row">
-                    <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
-                        <div class="card-header bg-transparent border-0 d-flex justify-content-center">
-                            <i class="far fa-file fa-2x"></i>
-                        </div>
-                        <div class="card-body text-center">
-                            <h6 class="card-title">240 pages</h6>
-                            <p class="card-text">Print length</p>
-                        </div>
-
-                    </div>
-                    <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
-                        <div class="card-header bg-transparent border-0 d-flex justify-content-center">
-                            <i class="fas fa-language fa-2x"></i>
-                        </div>
-                        <div class="card-body text-center">
-                            <h6 class="card-title">English</h6>
-                            <p class="card-text">Language</p>
-                        </div>
-                        
-                    </div>
-                    <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
-                        <div class="card-header bg-transparent border-0 d-flex justify-content-center">
-                            <i class="far fa-calendar-days fa-2x"></i>
-                        </div>
-                        <div class="card-body text-center">
-                            <h6 class="card-title">{{book.published}}</h6>
-                            <p class="card-text">Pub. Date</p>
-                        </div>
-                        
-                    </div>
-                    <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
-                        <div class="card-header bg-transparent border-0 d-flex justify-content-center">
-                            <i class="fas fa-ruler-combined fa-2x"></i>
-                        </div>
-                        <div class="card-body text-center">
-                            <h6 class="card-title">5.5 x 1 x 8.5</h6>
-                            <p class="card-text">Dimensions</p>
-                        </div>
-                        
-                    </div>
-                </div>
-            </div>
-            <div class="container d-flex justify-content-end mt-5 p-4 align-items-sm-center">
-                <a href="{% url 'add-to-cart' book.id %}" class="btn btn-dark">Add to cart</a>
-            </div>
+ <!-- Heading -->
+  <div class="bg-primary">
+    <div class="container py-4">
+      <!-- Breadcrumb -->
+      <nav class="d-flex">
+        <h6 class="mb-0">
           
+          <a href="/store-page" class="text-white-50">Home</a>
+          <span class="text-white-50 mx-2"> > </span>
+          <a href="" class="text-white">{{ books.title }}s</a>
+         
+        </h6>
+      </nav>
+      <!-- Breadcrumb -->
+    </div>
+  </div>
+  <!-- Heading -->
+<div class="alert alert-success alert-dismissible fade show text-center" role="alert" data-mdb-delay="3000" id="alert-added" style="display:none;">
+    <strong></strong> Successfully added to cart.
+  <button type="button" class="btn-close" data-mdb-dismiss="alert" aria-label="Close"></button>
+</div>
+
+<div class="alert alert-error alert-dismissible fade show text-center" role="alert" data-mdb-delay="3000" id="alert-added-error" style="display:none;"> Something went wrong!.
+  <button type="button" class="btn-close" data-mdb-dismiss="alert" aria-label="Close"></button>
+</div>
+
+<form class="container bg-white mt-5 mt-sm-2 mt-md-4" id="addform">
+    {% csrf_token %}
+    <section class="py-5">
+  <div class="container">
+    <div class="row gx-5">
+      <aside class="col-lg-6">
+        <div class="border rounded-4 mb-3 d-flex justify-content-center">
+          <a data-fslightbox="mygalley" class="rounded-4" target="_blank" data-type="image" href="">
+            <img style="max-width: 100%; max-height: 50vh; margin: auto;" class="rounded-4 fit" src="{{books.image.url}}" />
+          </a>
         </div>
-        {% endfor %}
+        <!-- thumbs-wrap.// -->
+        <!-- gallery-wrap .end// -->
+      </aside>
+      <main class="col-lg-6">
+        <div class="ps-lg-3">
+          <h2 class="title text-dark">
+            {{books.title}}
+          </h2>
+          {% for author in books.book_author.all %}
+          <p class="text-muted fw-normal h5">By {{ author }}</p>
+          {% endfor %}
+          <div class="d-flex flex-row my-3">
+            <div class="text-warning mb-1 me-2">
+              <i class="fa fa-star"></i>
+              <i class="fa fa-star"></i>
+              <i class="fa fa-star"></i>
+              <i class="fa fa-star"></i>
+              <i class="fas fa-star-half-alt"></i>
+              <span class="ms-1">
+                4.5
+              </span>
+            </div>
+            <span class="text-muted"><i class="fas fa-shopping-basket fa-sm mx-1"></i>154 orders</span>
+            <span class="text-success ms-2">In stock</span>
+          </div>
+
+        
+          <p>
+            {{books.description}}
+          </p>
+
+          <div class="row">
+            <dt class="col-3">Pages:</dt>
+            <dd class="col-9">120</dd>
+
+            <dt class="col-3">Language</dt>
+            <dd class="col-9">English</dd>
+
+            <dt class="col-3">Publisher</dt>
+            <dd class="col-9">NYC</dd>
+                
+          </div>
+          <hr />
+          <div class="mb-3 d-inline">
+            <span class="h2">₱{{books.price}}</span>
+          </div>
+          <div class="d-inline mx-4">
+             <button class="btn btn-primary shadow-0 btn-lg inline " id="add-cart-btn" data-item-id = {{books.id}}> <i class="me-1 fa fa-shopping-basket"></i> Add to cart </button>
+          </div>
+         
+
+
+          <div class="row mt-2 bg-light rounded-4">
+            <div class="container">
+             <hr>
+              <span class="float-start mt-2 mb-3 mx-2"><i class="fas fa-truck text-muted fa-2x"></i></span>
+              <span class="text-muted">Delivery estimate: within 2-3 days for Metro Manila areas and 5-7 days for Provincial areas</span>
+            <hr>
+              <span class="float-start mt-2 mb-3 mx-2"><i class="fas fa-envelope-open-text text-muted fa-2x"></i></i></span>
+             <span class="text-muted">Due to COVID-19 cases, the delivery times are longer than usual. Please expect some delays with your orders.</span>
+            <hr>
+            </div>
+          </div>
+
+        </div>
+      </main>
     </div>
-    </div>
+  </div>
+</section>  
 </form>
+<section class="bg-light border-top py-4">
+  <div class="container">
+    <div class="row gx-4">
+      <div class="col-lg-8 mb-4">
+        <div class="border rounded-2 px-3 py-2 bg-white">
+          <!-- Pills navs -->
+          <ul class="nav nav-pills nav-justified mb-3" id="ex1" role="tablist">
+            <li class="nav-item d-flex" role="presentation">
+              <a class="nav-link d-flex align-items-center justify-content-center w-100 active" id="ex1-tab-1" data-mdb-toggle="pill" href="#ex1-pills-1" role="tab" aria-controls="ex1-pills-1" aria-selected="true">Specification</a>
+            </li>
+            <li class="nav-item d-flex" role="presentation">
+              <a class="nav-link d-flex align-items-center justify-content-center w-100" id="ex1-tab-2" data-mdb-toggle="pill" href="#ex1-pills-2" role="tab" aria-controls="ex1-pills-2" aria-selected="false">Warranty info</a>
+            </li>
+            <li class="nav-item d-flex" role="presentation">
+              <a class="nav-link d-flex align-items-center justify-content-center w-100" id="ex1-tab-3" data-mdb-toggle="pill" href="#ex1-pills-3" role="tab" aria-controls="ex1-pills-3" aria-selected="false">Shipping info</a>
+            </li>
+            <li class="nav-item d-flex" role="presentation">
+              <a class="nav-link d-flex align-items-center justify-content-center w-100" id="ex1-tab-4" data-mdb-toggle="pill" href="#ex1-pills-4" role="tab" aria-controls="ex1-pills-4" aria-selected="false">Author Info</a>
+            </li>
+          </ul>
+          <!-- Pills navs -->
+  
+          <!-- Pills content -->
+          <div class="tab-content" id="ex1-content">
+            <div class="tab-pane fade show active" id="ex1-pills-1" role="tabpanel" aria-labelledby="ex1-tab-1">
+              <p>
+                {{books.description}}
+              </p>
+            
+              <table class="table border mt-3 mb-2">
+                <tr>
+                  <th class="py-2">ISBN</th>
+                  <td class="py-2">13.3-inch LED-backlit display with IPS</td>
+                </tr>
+                <tr>
+                  <th class="py-2">Length</th>
+                  <td class="py-2">13.3-inch LED-backlit display with IPS</td>
+                </tr>
+                <tr>
+                  <th class="py-2">Width</th>
+                  <td class="py-2">2.3GHz dual-core Intel Core i5</td>
+                </tr>
+                <tr>
+                  <th class="py-2">Height</th>
+                  <td class="py-2">720p FaceTime HD camera</td>
+                </tr>
+                <tr>
+                  <th class="py-2">Publisher</th>
+                  <td class="py-2">8 GB RAM or 16 GB RAM</td>
+                </tr>
+                <tr>
+                  <th class="py-2">Publication Date</th>
+                  <td class="py-2">{{books.published}}</td>
+                </tr>
+                <tr>
+                  <th class="py-2">Pages</th>
+                  <td class="py-2">Intel Iris Plus Graphics 640</td>
+                </tr>
+                <tr>
+                  <th class="py-2">Genre</th>
+                  <td class="py-2">{% for genre in books.genre.all %} 
+                  {{genre.name}}
+                  {% if not forloop.last %}, {% endif %}
+                  {% endfor %}</td>
+                </tr>
+                <tr>
+                  <th class="py-2">Author</th>
+                  <td class="py-2">Intel Iris Plus Graphics 640</td>
+                </tr>
+                <tr>
+                  <th class="py-2">Language</th>
+                  <td class="py-2">English</td>
+                </tr>
+              </table>
+            </div>
+            <div class="tab-pane fade mb-2" id="ex1-pills-2" role="tabpanel" aria-labelledby="ex1-tab-2">
+              Tab content or sample information now <br />
+              Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+              aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
+              officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+              nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+            </div>
+            <div class="tab-pane fade mb-2" id="ex1-pills-3" role="tabpanel" aria-labelledby="ex1-tab-3">
+              Another tab content or sample information now <br />
+              Dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+              commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+              mollit anim id est laborum.
+            </div>
+            <div class="tab-pane fade mb-2" id="ex1-pills-4" role="tabpanel" aria-labelledby="ex1-tab-4">
+              Some other tab content or sample information now <br />
+              Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+              aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
+              officia deserunt mollit anim id est laborum.
+            </div>
+          </div>
+          <!-- Pills content -->
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="px-0 border rounded-2 shadow-0">
+          
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Related Products</h5>
+              {% for book in related %}
+              <div class="d-flex mb-3">
+                <a href="{% url 'book-detail' book.id %}" class="me-3">
+                  <img src="{{book.image.url}}" style="min-width: 96px; height: 96px;" class="img-md img-thumbnail" />
+                </a>
+                <div class="info">
+                  <a href="{% url 'book-detail' book.id %}" class="nav-link mb-1">
+                    {{ book.title }} <br />
+                    {% for author in book.book_author.all %}
+                    by: {{author}}
+                    {% endfor %}
+                  </a>
+                  <p class="text-dark fw-normal">₱{{book.price}}</p>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+$(document).ready(function (){
+
+        CartNotif();
+
+    });
+    
+    function CartNotif(){
+         $.ajax({
+            url: '/cart-notification',
+            type: 'GET',
+            dataType: 'json',
+            success: function(data){
+                if (data.cart !== undefined && data.cart > 0){
+                     $("#item-count-notif").text(data.cart);
+                     console.log(data.cart)
+                } else {
+                     $("#item-count-notif").empty();
+                }
+            },
+            error:function(error){
+                console.log(error)
+            },
+
+        });
+    }
+     
+
+    $("#add-cart-btn").click(function(e){
+        e.preventDefault();
+
+        const product_id = $(this).data("item-id");
+        console.log(product_id)
+
+        $.ajax({
+
+            url: '/add-to-cart/'+product_id,
+            type:'POST',
+            data: {
+                'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+            },
+            success: function(data){
+                $("#alert-added").show()
+                $("#alert-added strong").text(data.message)
+                CartNotif();
+            },
+            error: function(error){
+                $("#alert-added-error").show()
+                $("#alert-added-error strong").text(error)
+            }
+
+        });
+        
+    });
+</script>
 {% endblock %}

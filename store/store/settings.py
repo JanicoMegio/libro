@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     
     'book.apps.BookConfig',
 
+    'fontawesomefree',
 ]
 
 MIDDLEWARE = [
@@ -66,7 +67,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'book.context_processors.cart_count',
+                #'book.context_processors.cart_count',
             ],
         },
     },
@@ -142,6 +143,9 @@ STRIPE_API_KEY = "sk_test_51NlQVoJXIZpi3SrN2iKy19TTmiDhuW5PAWbMjYoXA4Rxvw76XAJMy
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 SESSION_COOKIE_SECURE = True
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+
+
+LOGIN_URL = '/login'
 
 
 

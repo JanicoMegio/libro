@@ -1,117 +1,174 @@
 {% extends 'layout/base.html' %}
 
 {% block title %}{{user.username }} | Cart{%endblock title%}
-{% block content %} 
-<section class="h-100 h-custom" style="font-size: 1.2rem;">  
-  <div class="container h-100 py-5">
-     <a href="/store-page"><i class="fas fa-circle-arrow-left fa-2x"></i></a>
-    <div class="row d-flex justify-content-center align-items-center h-100">
-      <div class="col">
-        {% if items %}
-        <div class="table-responsive">
-          <table class="table">
-            <thead>
-              <tr>
-                <th scope="col" class="h5">Shopping Bag</th>
-                <th scope="col">Quantity</th>
-                <th scope="col">Price</th>
-                <th scope="col"></th>
-              </tr>
-            </thead>
+{% block content %}
+<header>
+  <!-- Heading -->
+  <div class="bg-primary">
+    <div class="container py-4">
+      <!-- Breadcrumb -->
+      <nav class="d-flex">
+        <h6 class="mb-0">
+          <a href="/store-page" class="text-white-50">Home</a>
+          <span class="text-white-50 mx-2"> > </span>
+          <a href="/cart" class="text-white"><u>Shopping cart</u></a>
+        </h6>
+      </nav>
+      <!-- Breadcrumb -->
+    </div>
+  </div>
+  <!-- Heading -->
+</header>
+
+<!-- Alert -->
+
+<div class="alert alert-success alert-dismissible fade show text-center" role="alert" data-mdb-delay="3000" id="alert-added" style="display:none;">
+    <strong></strong> Successfully added to cart.
+  <button type="button" class="btn-close" data-mdb-dismiss="alert" aria-label="Close"></button>
+</div>
+
+<div class="alert alert-error alert-dismissible fade show text-center" role="alert" data-mdb-delay="3000" id="alert-added-error" style="display:none;"> Something went wrong!.
+  <button type="button" class="btn-close" data-mdb-dismiss="alert" aria-label="Close"></button>
+</div>
+
+<!-- endAlert  -->
+
+{% if items %}
+<!-- cart + summary -->
+
+<section class="bg-light my-5">
+  <div class="container">
+    <div class="row">
+      <!-- cart -->
+      
+      <div class="col-lg-9">
+        <div class="card border shadow-0">
+          <div class="m-4">
+            <h4 class="card-title mb-4">Your shopping cart</h4>
             {% for item in items %}
-            <tbody>
-              <tr>
-                <th scope="row">
-                  <div class="d-flex align-items-center">
-                    <img
-                      src="{{ item.book_title.image.url }}"
-                      class="img-fluid rounded-3"
-                      style="width: 120px"
-                      alt="Book"
-                    />
-                    <div class="flex-column ms-4">
-                      <p class="mb-2">{{ item.book_title }}</p>
-                      {% for author in item.book_title.status.all %}
-                      <p class="mb-0">{{ author }}</p>
+            <div class="row gy-3 mb-4">
+              <div class="col-lg-5">
+                <div class="me-lg-5">
+                  <div class="d-flex">
+                    <img src="{{ item.book_title.image.url }}" class="border rounded me-3" style="width: 96px; height: 96px;" />
+                    <div class="">
+                      <a href="{% url 'book-detail' item.book_title.id %}" class="nav-link">{{ item.book_title.title }}</a>
+                      {% for author in item.book_title.book_author.all %}
+                      <p class="text-muted">{{ author }}</p>
                       {% endfor %}
                     </div>
                   </div>
-                </th>
-                <td class="align-middle">
-                  <form class="d-flex flex-row">
-                    {% csrf_token %}
-                    <a
-                      class="btn btn-link px-2"
-                      href="{% url 'minus-item' item.id %}"
-                    >
-                      <i class="fas fa-minus"></i>
-                    </a>
-                    <input
-                      min="1"
-                      name="quantity-input"
-                      value="{{item.quantity}}"
-                      type="number"
-                      class="form-control form-control-sm"
-                      style="width: 50px"
-                      readonly
-                    />
-
-                    <a
-                      class="btn btn-link px-2"
-                      href="{% url 'plus-item' item.id %}"
-                    >
-                      <i class="fas fa-plus"></i>
-                    </a>
-                  </form>
-                </td>
-                <td class="align-middle">
-                  <p class="mb-0" style="font-weight: 500">
-                    ${{item.total_cart_items}}
-                  </p>
-                </td>
-                <td class="align-middle">
-                <a href="{% url 'delete-item' item.pk %}"><i class="fas fa-xmark fa-lg"></i></a>
-                </td>
-              </tr>
-            </tbody>
-            {% endfor %}
-          </table>
-        </div>
-          <div class="col-lg-4 col-xl-4 float-end ">
-            <div class="d-flex justify-content-between" style="font-weight: 500;">
-              <p class="mb-2">Subtotal</p>
-              <p class="mb-2">${{total|floatformat:2}}</p>
-            </div>
-
-            <div class="d-flex justify-content-between" style="font-weight: 500;">
-              <p class="mb-0">Shipping Fee</p>
-              <p class="mb-0">$2.99</p>
-            </div>
-
-            <hr class="my-4">
-
-            <div class="d-flex justify-content-between mb-4" style="font-weight: 500;">
-              <p class="mb-2">Total (tax included)</p>
-              <p class="mb-2">${{total|floatformat:2}}</p>
-            </div>
-
-            <a href="{% url 'checkout-item' %}" class="btn btn-primary btn-block btn-lg">
-              <div class="d-flex justify-content-between">
-                <span>Checkout</span>
-                <span>$ {{total|floatformat:2}}</span>
+                </div>
               </div>
-            </a>
-
+              <div class="col-lg-2 col-sm-6 col-6 d-flex flex-row flex-lg-column flex-xl-row text-nowrap">
+                <form method="post" class="">
+                  {% csrf_token %}
+                  <a href="{% url 'minus-item' item.id %}" class="mx-3"><i class="fas fa-circle-minus fa-lg"></i></a>
+                  <span>{{ item.quantity }}</span>
+                  <a href="{% url 'plus-item' item.id %}" class="mx-3"><i class="fas fa-circle-plus fa-lg"></i></a>
+                </form>  
+                <div class="text-center">
+                  <text class="h6">$ {{item.total_cart_items}}</text> <br />
+                  <small class="text-muted text-nowrap"> $ {{ item.book_title.price }} / per item </small>
+                </div>
+              </div>
+              <div class="col-lg col-sm-6 d-flex justify-content-sm-center justify-content-md-start justify-content-lg-center justify-content-xl-end mb-2">
+                <div class="float-md-end">
+                  <a href="{% url 'delete-item' item.id %}" class="btn btn-light border text-danger icon-hover-danger"> Remove </a>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
           </div>
-        {% else %}
-        <div class="text-center mb-5">
-            <h2>Your Cart is Empty!</h2>
-            <i class="fas fa-cart-shopping fa-5x"></i>
+          <div class="border-top pt-4 mx-4 mb-4">
+            <p><i class="fas fa-truck text-muted fa-lg"></i> Free Delivery within 1-2 weeks</p>
+            <p class="text-muted">
+              Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+              aliquip
+            </p>
+          </div>
         </div>
-        {% endif %}
       </div>
+      <!-- cart -->
+      <!-- summary -->
+      <div class="col-lg-3">
+        <div class="card mb-3 border shadow-0">
+          <div class="card-body">
+            <form>
+              <div class="form-group">
+                <label class="form-label">Have coupon?</label>
+                <div class="input-group">
+                  <input type="text" class="form-control border" name="" placeholder="Coupon code" />
+                  <button class="btn btn-light border">Apply</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="card shadow-0 border">
+          <div class="card-body">
+            <div class="d-flex justify-content-between">
+              <p class="mb-2">Total price:</p>
+              <p class="mb-2">$ {{ total|floatformat:2 }}</p>
+            </div>
+            <div class="d-flex justify-content-between">
+              <p class="mb-2">Discount:</p>
+              <p class="mb-2 text-success">-$60.00</p>
+            </div>
+            <div class="d-flex justify-content-between">
+              <p class="mb-2">TAX:</p>
+              <p class="mb-2">$14.00</p>
+            </div>
+            <hr />
+            <div class="d-flex justify-content-between">
+              <p class="mb-2">Total price:</p>
+              <p class="mb-2 fw-bold">$ {{ total|floatformat:2 }}</p>
+            </div>
+
+            <div class="mt-3">
+              <a href="{% url 'checkout-item' %}" class="btn btn-success w-100 shadow-0 mb-2"> Place Order </a>
+              <a href="/store-page" class="btn btn-light w-100 border mt-2"> Back to shop </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- summary -->
     </div>
   </div>
 </section>
+{% include 'layout/footer.html' %}
+<!-- cart + summary -->
+{% else %}
+<div class="text-center m-5">
+   <i class="fas fa-cart-shopping fa-10x"></i>
+  <h1 class="mt-4">Your cart is empty   !</h1>
+</div>
+{% endif %}
+
+
+<script>
+$(document).ready(function (){
+    CartNotif();
+  });
+    
+function CartNotif(){
+  $.ajax({
+    url: '/cart-notification',
+    type: 'GET',
+    dataType: 'json',
+    success: function(data){
+      if (data.cart !== undefined && data.cart > 0){
+        $("#item-count-notif").text(data.cart);
+        console.log(data.cart)
+      } else {
+        $("#item-count-notif").empty();
+      }
+    },
+    error:function(error){
+      console.log(error)
+    },
+  });
+}
+</script>
 {% endblock content %}
 

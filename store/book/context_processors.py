@@ -1,7 +1,8 @@
-from book.models import CartItems
-from django.http import JsonResponse
+# from book.models import CartItems
+# from django.contrib.auth.decorators import login_required
 
-def cart_count(request):
-	user = request.user
-	cart_count = CartItems.objects.filter(user_name=user).count()
-	return {'cart_count': cart_count}
+# @login_required(login_url='login')
+# def cart_count(request):
+# 	user = request.user
+# 	cart_count = CartItems.objects.filter(user_name=user).count()
+# 	return {'cart_count': cart_count}

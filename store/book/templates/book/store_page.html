@@ -1,47 +1,239 @@
 {% extends 'layout/base.html' %}
 {% block title %}Store{% endblock %}
+{% block header %}
+<style>
+  .checked {
+  color: orange;
+}
+</style>
+{% endblock header %}
+
+
 {% block content %}
-  <div class="container mx-auto mt-3">
-    <div class="container">
-      <h1 class="m-4">Best Seller</h1>
-      <div class="row">
-          {% csrf_token %}
-          {% for book in page %}
-          <div class="col-sm-12 col-md-6 col-lg-2">
-            <div class="card">
-                  <img src="{{ book.image.url }}" alt="Books" class="img-fluid rounded-top p-2 hover-shadow" />
-                  <div class="card-body p-2">
-                    <h5 class="card-title text-capitalize">{{ book.title }}</h5>
-                    {% for author in book.book_author.all %}
-                        <p>By: {{ author }}</p>
-                      {% endfor %}
-                       <div class="rating">
-                          <span class="fa fa-star checked"></span>
-                          <span class="fa fa-star checked"></span>
-                          <span class="fa fa-star checked"></span>
-                          <span class="fa fa-star"></span>
-                          <span class="fa fa-star"></span>
-                        </div>
-                      <a href="{% url 'book-detail' book.id %}" class="btn btn-secondary card-link">View Details</a>
-                  </div>
+<!--Main Navigation-->
+<header>
+  <div class="bg-primary text-white py-5">
+    <div class="container py-5">
+      <h1>
+        Best products & <br />
+        brands in our store
+      </h1>
+      <p>
+        Trendy Products, Factory Prices, Excellent Service
+      </p>
+      <button type="button" class="btn btn-outline-light">
+        Learn more
+      </button>
+      <button type="button" class="btn btn-light shadow-0 text-primary pt-2 border border-white">
+        <span class="pt-1">Purchase now</span>
+      </button>
+    </div>
+  </div>
+  <div class="bg-primary text-white py-5">
+    <div class="container py-5">
+      <h1>
+        Best products & <br />
+        brands in our store
+      </h1>
+      <p>
+        Trendy Products, Factory Prices, Excellent Service
+      </p>
+      <button type="button" class="btn btn-outline-light">
+        Learn more
+      </button>
+      <button type="button" class="btn btn-light shadow-0 text-primary pt-2 border border-white">
+        <span class="pt-1">Purchase now</span>
+      </button>
+    </div>
+  </div>
+  <!-- Jumbotron -->
+</header>
+
+<section>
+  <div class="container">
+    <header class="mb-4 mt-4">
+      <h2>Best Seller</h2>
+    </header>
+    <div class="row">
+      {% for book in page%}
+      <div class="col-lg-3 col-md-6 col-sm-6 d-flex">
+        <div class="card w-100 my-2 shadow-3-strong ">
+          <a href="{% url 'book-detail' book.id %} ">
+            <div class="mask" style="height: 50px;">
+              <div class="d-flex justify-content-start align-items-start h-100 m-2">
+                {% if book.status == "new" %}
+                <h4><span class="badge bg-danger pt-2">{{book.status}}</span></h4>
+                {% else %}
+                <h4><span class="badge bg-success pt-2">{{book.status}}</span></h4>
+                {% endif %}
+              </div>
+            </div>
+            <img src="{{ book.image.url }}"  class="card-img-top hover-shadow p-4" style="aspect-ratio: 1 / 1.5" />
+          </a>
+          <div class="card-body d-flex flex-column">
+            <a href="{% url 'book-detail' book.id %}" class="text-decoration-none text-dark fw-bold fs-5">{{book.title}}</a>
+            {% for author in book.book_author.all %}
+            <p class="card-text">By {{author}}</p>
+            {% endfor %}
+            <div class="rating d-block">
+              <span class="fa fa-star checked"></span>
+              <span class="fa fa-star checked"></span>
+              <span class="fa fa-star checked"></span>
+              <span class="fa fa-star checked"></span>
+              <span class="fa fa-star checked"></span>
+              <span class="text-muted"> (2) </span>
+            </div>
+            <div class="card-footer pt-3 px-0 pb-0 mt-auto">
+              <div class="row">
+                <div class="col-6">
+                  <a href="{% url 'book-detail' book.id %}" class="text-decoration-none text-dark fw-normal fs-3"><span class="text-muted">₱</span>{{book.price}}</a>
+                </div>
+                <div class="col-6 text-center">
+                   <a href="" class="align-items-end text-danger"><i class="fas fa-heart fa-2x"></i></a>
+                </div>
+              </div>
             </div>
           </div>
-        {% endfor %}  
         </div>
-    </div>
-      <div class="pagination m-3">
-        <span class="step-links">
-            {% if page.has_previous %}
-                <a href="?page=1" class="btn"><i class="fas fa-angles-left"></i> First</a>
-                <a href="?page={{ page.previous_page_number }}" class="btn"><i class="fas fa-angle-left"></i> Previous</a>
-            {% endif %}
-            <span class="current-page"><i class="fas">{{ page.number }}</i></span>
-            {% if page.has_next %}
-                <a href="?page={{ page.next_page_number }}" class="btn">Next <i class="fas fa-angle-right"></i></a>
-                <a href="?page={{ page.paginator.num_pages }}" class="btn">Last  <i class="fas fa-angles-right"></i></a>
-            {% endif %}
-        </span>
       </div>
-</div>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="container mt-3 mb-3">
+    <nav aria-label="...">
+        <ul class="pagination justify-content-center">
+                {% if page.has_previous %}
+                <li class="page-item ">
+                  <a href="?page={{ page.previous_page_number }}" class="page-link">Previous</a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                  <a class="page-link">Previous</a>
+                </li>
+                {% endif %}
+
+                {% for i in page.paginator.page_range %}
+                  {% if page.number == i %}
+                  <li class="page-item active" aria-current="page">
+                    <a class="page-link">{{ i }} <span class="visually-hidden">(current)</span></a>
+                  </li>
+                  {% else %}
+                  <li class="page-item"><a class="page-link" href="?page={{ i }}">{{i}}</a></li>
+                  {% endif %}
+                {% endfor  %}
+                {% if page.has_next %}
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ page.paginator.num_pages }}">Next</a>
+                </li>
+                {% endif %}
+              </ul>
+      </nav>
+  </div>
+</section>
+
+<!-- Blog -->
+<section class="mt-5 mb-4">
+  <div class="container text-dark">
+    <header class="mb-4">
+      <h3>Blog posts</h3>
+    </header>
+
+    <div class="row">
+      <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+        <article>
+          <a href="#" class="img-fluid">
+            <img class="rounded w-100" src="https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/posts/1.webp" style="object-fit: cover;" height="160" />
+          </a>
+          <div class="mt-2 text-muted small d-block mb-1">
+            <span>
+              <i class="fa fa-calendar-alt fa-sm"></i>
+              23.12.2022
+            </span>
+            <a href="#"><h6 class="text-dark">How to promote brands</h6></a>
+            <p>When you enter into any new area of science, you almost reach</p>
+          </div>
+        </article>
+      </div>
+      <!-- col.// -->
+      <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+        <article>
+          <a href="#" class="img-fluid">
+            <img class="rounded w-100" src="https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/posts/2.webp" style="object-fit: cover;" height="160" />
+          </a>
+          <div class="mt-2 text-muted small d-block mb-1">
+            <span>
+              <i class="fa fa-calendar-alt fa-sm"></i>
+              13.12.2022
+            </span>
+            <a href="#"><h6 class="text-dark">How we handle shipping</h6></a>
+            <p>When you enter into any new area of science, you almost reach</p>
+          </div>
+        </article>
+      </div>
+      <!-- col.// -->
+      <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+        <article>
+          <a href="#" class="img-fluid">
+            <img class="rounded w-100" src="https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/posts/3.webp" style="object-fit: cover;" height="160" />
+          </a>
+          <div class="mt-2 text-muted small d-block mb-1">
+            <span>
+              <i class="fa fa-calendar-alt fa-sm"></i>
+              25.11.2022
+            </span>
+            <a href="#"><h6 class="text-dark">How to promote brands</h6></a>
+            <p>When you enter into any new area of science, you almost reach
+            When you enter into any new area of science, you almost reach
+          When you enter into any new area of science, you almost reach</p>
+          </div>
+        </article>
+      </div>
+      <!-- col.// -->
+      <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+        <article>
+          <a href="#" class="img-fluid">
+            <img class="rounded w-100" src="https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/posts/4.webp" style="object-fit: cover;" height="160" />
+          </a>
+          <div class="mt-2 text-muted small d-block mb-1">
+            <span>
+              <i class="fa fa-calendar-alt fa-sm"></i>
+              03.09.2022
+            </span>
+            <a href="#"><h6 class="text-dark">Success story of sellers</h6></a>
+            <p>When you enter into any new area of science, you almost reach</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- Blog -->
+
 {% include 'layout/footer.html' %}
+
+
+<script>
+$(document).ready(function (){
+    CartNotif();
+  });
+    
+function CartNotif(){
+  $.ajax({
+    url: '/cart-notification',
+    type: 'GET',
+    dataType: 'json',
+    success: function(data){
+      if (data.cart !== undefined && data.cart > 0){
+        $("#item-count-notif").text(data.cart);
+        console.log(data.cart)
+      } else {
+        $("#item-count-notif").empty();
+      }
+    },
+    error:function(error){
+      console.log(error)
+    },
+  });
+}
+</script>
 {% endblock %}
