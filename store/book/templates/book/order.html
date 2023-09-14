@@ -1,0 +1,147 @@
+{% extends 'layout/base.html' %}
+{% block content %}
+<header>
+  <!-- Heading -->
+  <div class="bg-dark">
+    <div class="container py-4">
+      <!-- Breadcrumb -->
+      <nav class="d-flex">
+        <h6 class="mb-0">
+          <a href="{% url 'store-page' %}" class="text-white-50"><i class="fa-solid fa-house"></i> Home</a>
+          <span class="text-white-50 mx-2"> > </span>
+          <a href="{% url 'user-account' %}" class="text-white-50"><i class="fas fa-user"></i
+        > Account</a>
+          <span class="text-white-50 mx-2"> > </span>
+          <a href="" class="text-white"><u>My Order</u></a>
+        </h6>
+      </nav>
+      <!-- Breadcrumb -->
+    </div>
+  </div>
+  <!-- Heading -->
+</header>
+
+
+<section style="background-color: #eee;">
+  <div class="container py-5">
+    <div class="row">
+      {% for userdetail in user_details %}
+      <div class="col-lg-4">
+        <div class="card">
+          <div class="card-body text-center">
+            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp" alt="avatar"
+              class="rounded-circle img-fluid" style="width: 150px;">
+            <h5 class="my-3">@{{user.username}}</h5>
+            <p class="text-muted mb-1">Email: {{user.email}}</p>
+            <p class="text-muted mb-4">Contact: {{userdetail.contact}}</p>
+            <a href="{% url 'order-history' %}" class="btn btn-primary">Order History</a>
+          </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-12">
+                <div class="card ">
+                  <div class="card-body">
+                    <p class="text-muted"> Address: {{userdetail.address1}}</p>
+                  </div>
+                  <hr>
+                  <div class="card-body">
+                    <p class="text-muted">Second Address: {{userdetail.address2}}</p>
+                  </div>
+                </div>
+            </div>
+        </div>
+      </div>
+      {% endfor %}
+      <div class="col-lg-8">
+        {% if order_details %}
+        <div class="card">
+           <div class="card-header">
+             <h3>Your Order</h3>
+           </div>
+            {% for order in order_details %}
+          <div class="card-body border border-2 m-4 rounded">
+            <div class="container">
+              <div class="row">
+                <div class="col-8">
+                  <p class="fw-bold mb-1">Order ID: 1110{{order.id}}
+                    {% if order.item_status == "pending"%}
+                    <strong class="text-danger">{{ order.item_status|capfirst }}</strong></p>
+                    {% elif order.item_status == "order confirm"%}
+                    <strong class="text-warning">{{ order.item_status|capfirst }}</strong></p>
+                    {% elif order.item_status == "out of delivery"%}
+                    <strong class="text-primary">{{ order.item_status|capfirst }}</strong></p>
+                    {% else %}
+                    <strong class="text-success">{{ order.item_status|capfirst }}</strong></p>
+                    {% endif %}
+                  <p class="text-muted">Date: {{order.order_date}}</p>
+                </div>
+                <div class="col-4 d-grid d-md-block ">
+                  {% if order.item_status == "delivered" %}
+                  <a href="{% url 'order-received' order.id %}" class="btn btn-success mb-2">Received</a>
+                  {% else %}
+                  <a class="btn btn-warning mb-2 disabled">Received</a>
+                  {% endif %}
+                  {% if order.item_status == "pending" %}
+                  <a class="btn btn-danger mb-2">Cancel</a>
+                  {% else %}
+                  <a class="btn btn-danger mb-2 disabled">Cancel</a>
+                  {% endif %}
+                </div>
+                <hr>
+              </div>
+              <div class="row">
+                <div class="col-md-4 col-sm-12 border-end">
+                  <p class="text-muted">Contact</p>
+                  {% for userdetail in user_details %}
+                  <p class="mb-2">Name: {{userdetail.fname}} {{userdetail.lname}}</p>
+                  <p class="mb-2">Phone: {{userdetail.contact}}</p>
+                  <p class="mb-2">Email: {{user.email}}</p>
+                </div>
+                <div class="col-md-5 col-sm-12 border-end">
+                  <p class="text-muted">Shipping Address</p>
+                  <p class="mb-0">{{ userdetail.address1 }}</p>
+                </div>
+                 {% endfor %}
+                <div class="col-md-3 col-sm-12 ">
+                  <p class="text-muted">Payment</p>
+                  <p class="fw-bold text-success mb-2">Cash on Delivery</p>
+                  <p class="mb-2">Shipping Fee: $42</p>
+                  <p class="mb-2">Total Paid: ${{order.total}}</p>
+                </div>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              {% for item in order.buy_items.all %}
+              <div class="col-lg-4 col-md-6 col-sm-12">
+                <div class="container d-flex">
+                  <img src="{{ item.book_order.image.url }}" style="width:96px; height: 96px;">
+                  <div class="container justify-content-center">
+                      <p class="mb-0">{{ item.book_order}}</p>
+                      <p class="fw-bold">{{item.qty}}x = ${{item.total_item}}</p>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="col-12">
+              <div class="card text-center">
+                <div class="card-header">
+                  <i class="fa-solid fa-box-open fa-beat fa-10x"></i>
+                </div>
+                <div class="card-body">
+                  <h2 class="text-muted">No order</h2>
+                  <a href="/store-page" class="btn btn-success">Shop Now!</a>
+                </div>
+              </div>
+          </div>
+          {% endif %}
+      </div> 
+    </div>
+  </div>
+</section>
+{% endblock %}

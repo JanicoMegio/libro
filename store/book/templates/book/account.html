@@ -1,0 +1,146 @@
+{% extends 'layout/base.html' %}
+
+{% block content %}
+<header>
+  <!-- Heading -->
+  <div class="bg-dark">
+    <div class="container py-4">
+      <!-- Breadcrumb -->
+      <nav class="d-flex">
+        <h6 class="mb-0">
+          <a href="{% url 'store-page'%}" class="text-white-50"><i class="fa-solid fa-house"></i> Home</a>
+          <span class="text-white-50 mx-2"> > </span>
+          <a href="{% url 'user-account'%}" class="text-white"><u>Account</u></a>
+        </h6>
+      </nav>
+      <!-- Breadcrumb -->
+    </div>
+  </div>
+  <!-- Heading -->
+</header>
+{% if persons %}
+{% for person in persons %}
+<section style="background-color: #eee;">
+  <div class="container py-5">
+    <div class="row">
+      <div class="col-lg-4">
+        <div class="card mb-4">
+          <div class="card-body text-center">
+            
+            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp" alt="avatar"
+              class="rounded-circle img-fluid" style="width: 150px;">
+            <h5 class="my-3">@{{user.username}}</h5>
+            <p class="text-muted mb-1">{{ person.contact }}</p>
+            <p class="text-muted mb-4">{{ person.address1 }}</p>
+            <div class="d-flex justify-content-center mb-2">
+              <a href="{% url 'update-info' person.id %}" class="btn btn-info ms-1">Update Info</a>
+               <a href="{% url 'order' %}" class="btn btn-success ms-1">My Order</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-8">
+        <div class="card mb-4">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">First Name</p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0">{{person.fname}}</p>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Last Name</p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0">{{person.lname}}</p>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Age</p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0">{{ person.age }}</p>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Birth Date</p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0">{{ person.birthdate }}</p>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Contact number</p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0">{{ person.contact }}</p>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Address </p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0">{{ person.address1 }}</p>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Second Address</p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0">{{ person.address2 }}</p>
+              </div>
+            </div>
+           
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endfor %}
+{% else %}
+<section style="background-color: #eee;">
+  <div class="container py-5">
+    <div class="row">
+      <div class="col-lg-4">
+        <div class="card mb-4">
+          <div class="card-body text-center">
+            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp" alt="avatar"
+              class="rounded-circle img-fluid" style="width: 150px;">
+            <h5 class="my-3">@{{ user.username }}</h5>
+            <p class="text-muted mb-1">{{ user.email }}</p>
+            <p class="text-muted mb-4">Create Information</p>
+
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-8">
+        <div class="card">
+
+          <div class="card-body text-center">
+              <i class="fas fa-circle-exclamation fa-5x"></i>
+              <h2 class="mt-2 mb-2">Update User Info</h2>
+              <p class="text-muted">To make place order</p>
+              <a href="{% url 'user-info' %}" class="btn btn-success">Update Info</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+{% endblock %}

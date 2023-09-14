@@ -1,0 +1,51 @@
+{% extends 'layout/base.html' %}
+
+{% block content %}
+<section class="mt-5">
+	<div class="row">
+		<div class="col-lg-6  mx-auto">
+			<!-- Media object -->
+			<div class="d-lg-flex">
+
+			  <!-- Image -->
+			  <img
+			    src="{{order.book_order.image.url}}"
+			    alt="John Doe"
+			    class="me-3"
+			    style="max-width:100%; max-height: 30vh;"
+			  />
+			  <!-- Body -->
+			  <div>
+			  	<h1 class="fw-normal">Create Review</h1>
+			    <h5 class="fw-bold">
+			      {{order.book_order}}
+			    </h5>
+			    <p>
+			      {{order.book_order.description}}
+			    </p>
+			    <form class="p-3" method="post">
+			    	{% csrf_token %}
+			    	<label class="form-label">Rate {{order.book_order.title}}</label>
+			    	<select class="form-select mb-3" name="rating"aria-label="Default select example" required="required" required>
+					  <option selected value="1">From 1 to 5</option>
+					  <option value="1">1</option>
+					  <option value="2">2</option>
+					  <option value="3">3</option>
+					  <option value="4">4</option>
+					  <option value="5">5</option>
+					</select>
+
+			    	<div class="form-outline w-100 mb-4">
+					  <textarea class="form-control" id="textAreaExample5" name="comment"rows="8" required></textarea>
+					  <label class="form-label" for="textAreaExample5">Write something here...</label>
+					</div>
+					<input type="hidden" name="book_id" value="{{order.id}}">
+					<button type="submit" class="btn btn-success m-2 float-end">Submit</button>
+			    </form>	    
+			  </div>
+			</div>
+			<!-- Media object -->
+		</div>
+	</div>
+</section>
+{% endblock %}
