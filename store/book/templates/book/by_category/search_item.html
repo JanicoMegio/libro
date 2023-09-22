@@ -1,14 +1,24 @@
 {% extends 'layout/base.html' %}
+{% block header %}
+
+<style>
+  .active a{
+    background-color: black !important;
+    color: white !important;;
+  }
+</style>
+
+{% endblock %}
 {% block content %}
 <!-- Heading -->
-  <div class="bg-secondary">
+  <div class="bg-light">
     <div class="container py-4">
       <!-- Breadcrumb -->
       <nav class="d-flex">
         <h6 class="mb-0">
-          <a href="{% url 'store-page'%}" class="text-white-50"><i class="fas fa-house"></i> Home</a>
-          <span class="text-white-50 mx-2"> > </span>
-          <a href="" class="text-white">{{ search_data }}</a>
+          <a href="{% url 'store-page'%}" class="text-dark"><i class="fas fa-house"></i> Home</a>
+          <span class="text-dark mx-2"> > </span>
+          <a href="" class="text-dark">{{ search_data }}</a>
          
         </h6>
       </nav>

@@ -694,16 +694,9 @@ def sale_banner_3(request):
 def search_book(request):
     search_data = request.GET.get("search-item", "")
     sort_by = request.GET.get('sort_select')
-
-    # Start with all books
     books_page = Book.objects.all()
-
-    # Apply search filter if search_data is provided
     if search_data:
         books_page = books_page.filter(title__icontains=search_data)
-
-
-    # Apply sorting based on sort_by parameter
     if sort_by == 'lth':
        books_page = books_page.order_by('price')
     elif sort_by == 'htl':
@@ -713,12 +706,6 @@ def search_book(request):
     elif sort_by == 'new':
         books_page = books_page.order_by('-date')
 
-    # Now, books_page contains both the search filter and sorting
-    print(books_page.count())  # The count will include both filter and sorting criteria
-    print(search_data)
-
-        
-   
 
     result_count = books_page.count()
     paginator = Paginator(books_page, per_page=12)
