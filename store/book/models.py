@@ -11,9 +11,11 @@ class UserDetails(models.Model):
     fname = models.CharField(max_length=255)
     lname = models.CharField(max_length=255)
     midname = models.CharField(max_length=255)
+    user_avatar = models.ImageField(upload_to="user_images")
     age = models.PositiveIntegerField()
     birthdate = models.DateField(null=True)
     contact = models.CharField(max_length=11)
+
 
     def __str__(self):
         return f'Name:{self.lname}, {self.fname}. Details'
@@ -22,7 +24,8 @@ class UserDetails(models.Model):
 
 class Author(models.Model):
     name = models.CharField(max_length=255)
-    description = models.TextField(max_length=500)
+    description = models.TextField(max_length=3000)
+    author_image = models.ImageField(upload_to="author_images")
 
     def __str__(self):
         return self.name
@@ -35,10 +38,20 @@ class Genre(models.Model):
         return self.name
 
 
+class Publisher(models.Model):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
 BOOK_STATUS = (
     ('new', 'NEW'),
     ('sale', 'SALE'),
+    ('none', 'NONE'),
+
 )
+
+
 
 
 class Book(models.Model):
@@ -48,11 +61,17 @@ class Book(models.Model):
     genre = models.ManyToManyField(Genre)
     description = models.TextField(max_length=1000, null=True)
     published = models.DateField(null=True)
+    ISBN = models.CharField(max_length=13)
+    dimension = models.CharField(max_length=50)
+    publisher = models.ForeignKey(Publisher, on_delete=models.CASCADE)
+    pages = models.PositiveIntegerField()
+    language = models.CharField(max_length=255, default="English")
     status = models.CharField(
-        max_length=10, choices=BOOK_STATUS, default='new')
+        max_length=20, choices=BOOK_STATUS, default='none')
     date = models.DateTimeField(auto_now_add=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     review_star = models.PositiveIntegerField(default=1)
+
 
     
     def __str__(self):
@@ -60,6 +79,20 @@ class Book(models.Model):
         return f"{self.title} by {author_names}"
     
 
+
+class Wishlist(models.Model):
+    user_name = models.OneToOneField(User, on_delete=models.CASCADE)
+    wish_book = models.ManyToManyField(Book)
+
+    def add_to_wishlist(self, book):
+        self.wish_book.add(book)
+
+    def remove_from_wishlist(self, book):
+        self.wish_book.remove(book)
+
+    def __str__(self):
+        wishitem = ''.join([book.title for book in self.wish_book.all()])
+        return f'{wishitem}'  
 
 class CartItems(models.Model):
     user_name = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -89,7 +122,7 @@ class Order(models.Model):
     review = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"Order: {self.book_order}"
+        return f"{self.book_order}"
 
 class OrderedItems(models.Model):
     user_name = models.ForeignKey(User, on_delete=models.CASCADE)

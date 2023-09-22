@@ -1,0 +1,35 @@
+<!-- News jumbotron -->
+<div class="jumbotron  hoverable p-4 bg-light">
+
+  <div class="container px-5">
+    <!-- Grid row -->
+     {% for author in featured_author %}
+  <div class="row">
+    <!-- Grid column -->
+    <div class="col-md-4 offset-md-1 mx-3 my-3">
+      <!-- Featured image -->
+      <div class="view overlay">
+        <img src="{{ author.author_image.url }}" class="img-fluid" alt="Sample image for first version of blog listing">
+        <a>
+          <div class="mask rgba-white-slight"></div>
+        </a>
+      </div>
+    </div>
+    <!-- Grid column -->
+    <!-- Grid column -->
+    <div class="col-md-7 text-md-left ml-3 mt-3">
+      <!-- Excerpt -->
+      <h2>Featured Author</h2>
+     
+      <h4 class="h4 mb-4">{{author.name}}</h4>
+      <p class="font-weight-normal">{{author.description|linebreaks}}</p>
+      <p class="text-decoration-underline fw-bold h4"><a href="#" class="text-dark">Read More</a></p>
+      
+    </div>
+    <!-- Grid column -->
+  </div>
+  {% endfor %}
+  <!-- Grid row -->
+  </div>
+</div>
+<!-- News jumbotron -->

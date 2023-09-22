@@ -16,9 +16,9 @@ from django.db import transaction
 
 #from django.contrib.auth.forms import UserCreationForm
 
-from .forms import UserInfoForm
+from .forms import UserInfoForm, SortForm
 
-from .models import Book, Author, Genre, CartItems, OrderedItems, UserDetails, Order, CustomerReview
+from .models import Book, Author, Genre, CartItems, OrderedItems, UserDetails, Order, CustomerReview, Wishlist
 
 
 from django.core.paginator import Paginator
@@ -135,9 +135,13 @@ def update_user_info(request, pk):
 @login_required(login_url="login")
 def store_page(request):
     user = request.user
-    books = Book.objects.all()
-    cart = CartItems.objects.filter(user_name=user).count()
-    items_per_page = 8
+    book_new = Book.objects.all().order_by("-date")[:7]
+    books = Book.objects.all().order_by("?")[:6]
+    featured_author = Author.objects.all().order_by("?")[:1]
+    genre = Genre.objects.all().order_by('?')[:6]
+    trend = Book.objects.all().order_by('-review_star')[:6]
+
+    items_per_page = 6
 
     # Create a Paginator instance
     paginator = Paginator(books, items_per_page)
@@ -149,8 +153,14 @@ def store_page(request):
     page = paginator.get_page(page_number)
 
     context = {
-        'page':page,
-        'cart': cart,
+        #'page':page,
+        'book_new':book_new,
+        'books':books,
+        'genre': genre,
+        'trend': trend,
+        #'cart': cart,
+        #'rating':rating,
+        'featured_author': featured_author,
     }
     
     return render(request, 'book/store_page.html', context=context)
@@ -165,6 +175,13 @@ def new_books(request):
 
 
 
+@login_required(login_url="login")
+def wish_list(request):
+    wish_list = Wishlist.objects.filter(user_name=request.user)
+    context = {
+    'wish_list':wish_list,
+    }
+    return render(request, 'book/wishlist.html', context)
 
 
 
@@ -179,6 +196,9 @@ def cart_notification(request):
     return JsonResponse(response_data)
 
 # end here 
+
+
+#------------------------------------------------------- ADD TO CART FUNCTION
 
 @login_required(login_url="login")
 def add_to_cart(request, pk):
@@ -196,11 +216,43 @@ def add_to_cart(request, pk):
     response_data = {'message': f'{book.title}'}
     return JsonResponse(response_data)
     
+#-------------------------------------------------------- END HERE
+
+@login_required(login_url="login")
+def add_to_wishlist(request, pk):
+    book = Book.objects.get(pk=pk)
+    current_user = request.user
+    try:
+        wishlist, created = Wishlist.objects.get_or_create(user_name=current_user)
+        wishlist.add_to_wishlist(book=book)
+    except Book.DoesNotExist:
+        messages.error(request, 'Item not found!')
+    response_data = {'message': f'{book.title}'}
+    return JsonResponse(response_data)
 
 
+@login_required(login_url="login")
+def add_to_cart_wishlist(request, pk):
+    current_user = request.user
+    book = Book.objects.get(pk=pk)
+    wish_item = Wishlist.objects.get(user_name=current_user)
+    try:
+        cart_item, created = CartItems.objects.get_or_create(user_name=current_user, book_title=book)
+        cart_item.save()
+        wish_item.wish_book.remove(book)
+        messages.success(request, f'{wish_item}')
+    except Book.DoesNotExist:
+        messages.error(request, 'Item not found!')
+    return redirect('wishlist')
 
-    
 
+@login_required(login_url="login")
+def wishlist_item_remove(request, pk):
+    book = Book.objects.get(pk=pk)
+    current_user = request.user
+    wishlist = Wishlist.objects.get(user_name=current_user)
+    wishlist.remove_from_wishlist(book=book)
+    return redirect('wishlist')
     
 @login_required(login_url="login")
 def view_cart(request):
@@ -331,7 +383,7 @@ def order_history(request):
 def create_review(request, pk):
   
     order = get_object_or_404(Order, pk=pk)
-   
+    book = Book.objects.get(pk=order.book_order.id)
     if request.method == "POST":
         comment = request.POST.get('comment')
         rate = request.POST.get('rating')
@@ -344,8 +396,9 @@ def create_review(request, pk):
             star=rate
         )
         
-     
+        book.review_star += int(rate)
         order.review = True
+        book.save()
         order.save()
         
         return redirect('order-history')
@@ -362,6 +415,7 @@ def item_received(request, pk):
         item = OrderedItems.objects.get(id=pk)
         item.received = True
         item.save()
+
     except OrderedItems.DoesNotExist:
         return HttpResponse("Error item does not exist")
     return redirect('order')
@@ -407,19 +461,279 @@ def payment_success(request):
 
 @login_required(login_url="login")
 def book_detail(request, pk):
-    books = Book.objects.get(pk=pk)
     user = request.user
+    books = Book.objects.get(pk=pk)
+    book_order_item = Order.objects.filter(book_order=pk).count()
+    wish_item = Wishlist.objects.filter(user_name=user, wish_book=pk).first()
     genres = [genre_list.name for genre_list in books.genre.all()]
     cart = CartItems.objects.filter(user_name=user).count()
     related = Book.objects.filter(genre__name__in=genres).order_by("?")[:5]
+    item_review = CustomerReview.objects.filter(item_review__book_order=pk).order_by("-date")[:3]
     context = {
     'books': books,
     'cart': cart,
+    'wish_item': wish_item,
     'related': related,
+    'book_order_item': book_order_item,
+    'item_review': item_review,
+
     }
     return render(request, 'book/book_detail.html', context=context)
 
 
+
+#-------------------------------------------- all book by genre -- start here 
+
+def genre_novel(request):
+    books = Book.objects.filter(genre__name="Novel")
+    sort_by = request.GET.get('sort_select')
+    if sort_by == 'lth':
+        books = books.order_by('price')
+    elif sort_by == 'htl':
+        books = books.order_by('-price')
+    elif sort_by == 'bs':
+        books = books.order_by('-review_star')
+    elif sort_by == 'new':
+        books = books.order_by('-date')
+
+    genre = "Novel"
+    items_per_page = 12
+    paginator = Paginator(books, items_per_page)
+    page_number = request.GET.get('page')
+    page = paginator.get_page(page_number)
+
+    context = {
+    'page': page,
+    'genre': genre,
+    'sort_by': sort_by,
+    }
+
+    return render(request, 'book/by_category/novel.html', context)
+
+
+def genre_romance(request):
+    books = Book.objects.filter(genre__name="Romance").order_by("?")
+    sort_by = request.GET.get('sort_select')
+    if sort_by == 'lth':
+        books = books.order_by('price')
+    elif sort_by == 'htl':
+        books = books.order_by('-price')
+    elif sort_by == 'bs':
+        books = books.order_by('-review_star')
+    elif sort_by == 'new':
+        books = books.order_by('-date')
+    genre = "Romance"
+    items_per_page = 12
+    paginator = Paginator(books, items_per_page)
+    page_number = request.GET.get('page')
+    page = paginator.get_page(page_number)
+
+    context = {
+    'page': page,
+    'genre': genre,
+    'sort_by': sort_by,
+    }
+    return render(request, 'book/by_category/novel.html', context)
+
+
+
+def genre_science(request):
+    books = Book.objects.filter(genre__name__in="science").order_by("?")
+    sort_by = request.GET.get('sort_select')
+    if sort_by == 'lth':
+        books = books.order_by('price')
+    elif sort_by == 'htl':
+        books = books.order_by('-price')
+    elif sort_by == 'bs':
+        books = books.order_by('-review_star')
+    elif sort_by == 'new':
+        books = books.order_by('-date')
+    items_per_page = 12
+    paginator = Paginator(books, items_per_page)
+    page_number = request.GET.get('page')
+    page = paginator.get_page(page_number)
+
+    context = {
+    'page': page,
+    'genre': genre,
+    'sort_by': sort_by,
+    }
+    return render(request, 'book/by_category/novel.html', context)
+
+
+def genre_history(request):
+    books = Book.objects.filter(genre__name__in="history").order_by("?")
+    sort_by = request.GET.get('sort_select')
+    if sort_by == 'lth':
+        books = books.order_by('price')
+    elif sort_by == 'htl':
+        books = books.order_by('-price')
+    elif sort_by == 'bs':
+        books = books.order_by('-review_star')
+    elif sort_by == 'new':
+        books = books.order_by('-date')
+    items_per_page = 12
+    paginator = Paginator(books, items_per_page)
+    page_number = request.GET.get('page')
+    page = paginator.get_page(page_number)
+    context = {
+    'page': page,
+    'genre': genre,
+    'sort_by': sort_by,
+    }
+    return render(request, 'book/by_category/novel.html', context)
+
+
+
+def shop_by_category(request, pk):
+    genre = Genre.objects.get(pk=pk)
+    books = Book.objects.filter(genre__name=genre).all()
+    sort_by = request.GET.get('sort_select')
+    if sort_by == 'lth':
+        books = books.order_by('price')
+    elif sort_by == 'htl':
+        books = books.order_by('-price')
+    elif sort_by == 'bs':
+        books = books.order_by('-review_star')
+    elif sort_by == 'new':
+        books = books.order_by('-date')
+    items_per_page = 12
+
+    paginator = Paginator(books, items_per_page)
+    page_number = request.GET.get('page')
+    page = paginator.get_page(page_number)
+    context = {
+    'page': page,
+    'genre': genre,
+    'sort_by': sort_by,
+    }
+    return render(request, 'book/by_category/novel.html', context)
+
+
+
+#--------------------------------------------- all book by_category -- END HERE 
+
+#--------------------------------------------- 3 SALE BANNER 
+
+def sale_banner_1(request):
+    books = Book.objects.all()
+    genre = 'Online bundles'
+
+    sort_by = request.GET.get('sort_select')
+    if sort_by == 'lth':
+        books = books.order_by('price')
+    elif sort_by == 'htl':
+        books = books.order_by('-price')
+    elif sort_by == 'bs':
+        books = books.order_by('-review_star')
+    elif sort_by == 'new':
+        books = books.order_by('-date')
+        
+    items_per_page = 12
+    paginator = Paginator(books, items_per_page)
+    page_number = request.GET.get('page')
+    page = paginator.get_page(page_number)
+    context = {
+    'page': page,
+    'genre': genre,
+    'sort_by': sort_by,
+    }
+    return render(request, 'book/by_category/novel.html', context)
+
+def sale_banner_2(request):
+    books = Book.objects.all()
+    sort_by = request.GET.get('sort_select')
+    if sort_by == 'lth':
+        books = books.order_by('price')
+    elif sort_by == 'htl':
+        books = books.order_by('-price')
+    elif sort_by == 'bs':
+        books = books.order_by('-review_star')
+    elif sort_by == 'new':
+        books = books.order_by('-date')
+    genre = 'Fave Reads'
+    items_per_page = 12
+    paginator = Paginator(books, items_per_page)
+    page_number = request.GET.get('page')
+    page = paginator.get_page(page_number)
+    context = {
+    'page': page,
+    'genre': genre,
+    'sort_by': sort_by,
+    }
+    return render(request, 'book/by_category/novel.html', context)
+
+def sale_banner_3(request):
+    books = Book.objects.all()
+    sort_by = request.GET.get('sort_select')
+    if sort_by == 'lth':
+        books = books.order_by('price')
+    elif sort_by == 'htl':
+        books = books.order_by('-price')
+    elif sort_by == 'bs':
+        books = books.order_by('-review_star')
+    elif sort_by == 'new':
+        books = books.order_by('-date')
+    genre = 'Special'
+    items_per_page = 12
+    paginator = Paginator(books, items_per_page)
+    page_number = request.GET.get('page')
+    page = paginator.get_page(page_number)
+    context = {
+    'page': page,
+    'genre': genre,
+    'sort_by': sort_by,
+    }
+    return render(request, 'book/by_category/novel.html', context)
+
+
+#--------------------------------------------- SALE BANNER --- END HERE 
+
+#--------------------------------------------- SEACH ITEM -- START HERE 
+
+def search_book(request):
+    search_data = request.GET.get("search-item", "")
+    sort_by = request.GET.get('sort_select')
+
+    # Start with all books
+    books_page = Book.objects.all()
+
+    # Apply search filter if search_data is provided
+    if search_data:
+        books_page = books_page.filter(title__icontains=search_data)
+
+
+    # Apply sorting based on sort_by parameter
+    if sort_by == 'lth':
+       books_page = books_page.order_by('price')
+    elif sort_by == 'htl':
+        books_page = books_page.order_by('-price')
+    elif sort_by == 'bs':
+        books_page = books_page.order_by('-review_star')
+    elif sort_by == 'new':
+        books_page = books_page.order_by('-date')
+
+    # Now, books_page contains both the search filter and sorting
+    print(books_page.count())  # The count will include both filter and sorting criteria
+    print(search_data)
+
+        
+   
+
+    result_count = books_page.count()
+    paginator = Paginator(books_page, per_page=12)
+    page_number = request.GET.get('page')
+    page = paginator.get_page(page_number)
+
+    context = {
+        'page': page,
+        'result_count': result_count,
+        'search_data': search_data,
+        'sort_by': sort_by, 
+        }
+    return render(request, 'book/by_category/search_item.html', context)
+   
+#--------------------------------------------- SEACH ITEM ----END HERE
 
 
 @login_required(login_url="login")

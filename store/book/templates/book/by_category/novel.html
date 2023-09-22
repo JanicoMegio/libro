@@ -1,0 +1,165 @@
+{% extends 'layout/base.html' %}
+
+{% block header %}
+
+<style>
+  .active a{
+    background-color: black !important;
+    color: white !important;;
+  }
+</style>
+
+{% endblock %}
+
+{% block content %}
+<!--Main Navigation-->
+
+<!-- Heading -->
+  <div class="bg-secondary">
+    <div class="container py-4">
+      <!-- Breadcrumb -->
+      <nav class="d-flex">
+        <h6 class="mb-0">
+          <a href="{% url 'store-page'%}" class="text-white-50"><i class="fas fa-house"></i> Home</a>
+          <span class="text-white-50 mx-2"> > </span>
+          <a href="" class="text-white">{{ genre }}</a>
+         
+        </h6>
+      </nav>
+      <!-- Breadcrumb -->
+    </div>
+  </div>
+  <!-- Heading -->
+
+
+<!-- BY CATEGORY SORT -->
+  <section class="mt-5 mb-4">
+    <div class="container">
+    	<div class="row">
+    		<div class="col-6">
+    			<header class="mb-5">
+        	<h1>{{ genre }}</h1>
+        </header>
+    		</div>
+        {% if page %}
+    		<div class="col-6">
+    			<div class="float-end mb-3">
+            <form method="get" id="sort-form">
+              {% csrf_token %}
+              <h5 class="fw-normal d-inline">SORT BY</h5>
+              <select class="select px-4 py-2 mx-2" id="sort-select" name="sort_select">
+                <option selected disabled hidden></option>
+                <option value="lth" {% if sort_by == "lth"%} selected {% endif %}> Price: Low to High</option>
+                <option value="htl"{% if sort_by == "htl"%} selected {% endif %}>Price: High to Low</option>
+                <option value="bs" {% if sort_by == "bs"%} selected {% endif %}>Bestselling</option>
+                <option value="new"{% if sort_by == "new"%} selected {% endif %}>Newest</option>
+              </select>
+            </form>
+          </div>
+    		</div>
+    	</div>
+      <div class="row">
+        {% for book in page %}
+        <div class="col-lg-2 col-md-6 col-sm-6 col-12">
+          <article class="bg-light">
+            {% if book.status == 'new' %}
+            <span class="badge bg-danger">NEW</span>
+            {% elif book.status == 'sale'%}
+            <span class="badge bg-success">SALE</span>
+            {% else %}
+            <span class="badge">.</span>
+            {% endif %}
+            <div class="bg-image hover-overlay ripple">
+              <a href="{% url 'book-detail' book.id %}" class="img-fluid">
+                <img class="rounded w-100"  src="{{book.image.url}}" style="object-fit: scale-down;" height="220" />
+                <div class="mask" style="background-color: hsla(0, 0%, 98%, 0.2)"></div>
+              </a>
+            </div>
+            <div class="mt-2 text-muted small d-block mb-1 text-center">
+              <a href="#"><h6 class="text-dark text-center">{{book.title}}</h6 ></a>
+              {% for author in book.book_author.all %}
+              <p class="fw-normal">By {{author}}</p>
+              {% endfor %}
+              <a href="{% url 'book-detail' book.id %}" class="btn btn-light   d-block fs-6"><span class="text-muted">₱</span><span class="fw-bold">{{ book.price }}</span></a>
+            </div>
+          </article>
+        </div>
+        {% endfor %}
+        <!-- col.// -->
+      </div>
+    </div>
+  </section>
+
+<!-- Pagination  -->
+		<div class="container mt-3 mb-3">
+	      <nav aria-label="...">
+	        <ul class="pagination justify-content-center">
+	          {% if page.has_previous %}
+	            <li class="page-item">
+	              <a href="?page={{ page.previous_page_number }}" class="page-link">Previous</a>
+	            </li>
+	          {% else %}
+	            <li class="page-item disabled">
+	              <a class="page-link">Previous</a>
+	            </li>
+	          {% endif %} {% for i in page.paginator.page_range %}
+	            {% if page.number == i %}
+	              <li class="page-item active" aria-current="page">
+	                <a class="page-link">{{ i }} <span class="visually-hidden">(current)</span></a>
+	              </li>
+	            {% else %}
+	              <li class="page-item">
+	                <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+	              </li>
+	            {% endif %}
+	          {% endfor %} {% if page.has_next %}
+	            <li class="page-item">
+	              <a class="page-link" href="?page={{ page.paginator.num_pages }}">Next</a>
+	            </li>
+	          {% endif %}
+	        </ul>
+	      </nav>
+    	</div>
+	</div>
+<!-- end here -->
+
+{% else %}
+
+<section>
+  <div class="container">
+    <h1 class="text-center text-muted fw-normal fs-3">Sorry, fetching error!</h1>
+  </div>
+</section>
+
+{% endif %}
+<script>
+console.log('scripts is loaded!')
+$(document).ready(function (){
+    CartNotif();
+    $('#sort-select').change(function(){
+
+        $('#sort-form').submit();
+    });
+  });
+    
+function CartNotif(){
+  $.ajax({
+    url: '/cart-notification',
+    type: 'GET',
+    dataType: 'json',
+    success: function(data){
+      if (data.cart !== undefined && data.cart > 0){
+        $("#item-count-notif").text(data.cart);
+      } else {
+        $("#item-count-notif").empty();
+      }
+    },
+    error:function(error){
+      console.log(error)
+    },
+  });
+}
+
+
+</script>
+{% endblock %}

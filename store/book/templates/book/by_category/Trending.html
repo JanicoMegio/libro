@@ -1,0 +1,37 @@
+<!-- Trending  -->
+  <section class="mt-5 mb-4">
+    <div class="container">
+      <header class="mb-5">
+        <h2>What's Trending</h2>
+      </header>
+      <div class="row">
+        {% for book in trend %}
+        <div class="col-lg-2 col-md-3 col-6">
+          <article class="bg-light">
+            {% if book.status == 'new' %}
+            <span class="badge bg-danger">NEW</span>
+            {% elif book.status == 'sale'%}
+            <span class="badge bg-success">SALE</span>
+            {% else %}
+            <span class="badge">.</span>
+            {% endif %}
+            <div class="bg-image hover-overlay ripple">
+              <a href="{% url 'book-detail' book.id %}" class="img-fluid">
+                <img class="rounded w-100"  src="{{book.image.url}}" style="object-fit: scale-down;" height="220" />
+                <div class="mask" style="background-color: hsla(0, 0%, 98%, 0.2)"></div>
+              </a>
+            </div>
+            <div class="mt-2 text-muted small d-block mb-1 text-center">
+              <a href="#"><h6 class="text-dark text-center">{{book.title}}</h6 ></a>
+              {% for author in book.book_author.all %}
+              <p class="fw-normal">By {{author}}</p>
+              {% endfor %}
+              <a href="{% url 'book-detail' book.id %}" class="btn btn-light   d-block fs-6"><span class="text-muted">₱</span><span class="fw-bold">{{ book.price }}</span></a>
+            </div>
+          </article>
+        </div>
+        {% endfor %}
+        <!-- col.// -->
+      </div>
+    </div>
+  </section>

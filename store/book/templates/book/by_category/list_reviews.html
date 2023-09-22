@@ -1,0 +1,28 @@
+{% if item_review %}
+<section class="bg-light pb-5">
+  <div class="container bg-white rounded-9 border">
+     <h2 class="mb-3 px-2 py-3">Reviews</h2>
+  {% for review in item_review %}
+  <div class="row px-4">
+    <div class="container mx-auto">
+      <h5><span class="text-muted">By</span>@{{review.user_name}}</h5>
+      <p>{{review.date|date:"F d, Y"}}</p>
+      <div class="text-warning mb-1 me-2">
+              <i class="fa fa-star"></i>
+              <i class="fa fa-star"></i>
+              <i class="fa fa-star"></i>
+              <i class="fa fa-star"></i>
+              <i class="fas fa-star-half-alt"></i>
+              <span class="ms-1">
+                {{review.star}}
+              </span>
+      </div>
+      <p>{{review.comment|linebreaks}}</p>
+    </div>
+  </div>
+  <hr>
+  {% endfor %}
+  </div>
+
+</section>
+{% endif %}

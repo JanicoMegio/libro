@@ -3,14 +3,14 @@
 {% block content %}
 <header>
   <!-- Heading -->
-  <div class="bg-dark">
+  <div class="bg-light">
     <div class="container py-4">
       <!-- Breadcrumb -->
       <nav class="d-flex">
         <h6 class="mb-0">
-          <a href="{% url 'store-page'%}" class="text-white-50"><i class="fa-solid fa-house"></i> Home</a>
-          <span class="text-white-50 mx-2"> > </span>
-          <a href="{% url 'user-account'%}" class="text-white"><u>Account</u></a>
+          <a href="{% url 'store-page'%}" class="text-dark"><i class="fa-solid fa-house"></i> Home</a>
+          <span class="text-dark mx-2"> > </span>
+          <a href="{% url 'user-account'%}" class="text-dark"><u>Account</u></a>
         </h6>
       </nav>
       <!-- Breadcrumb -->
@@ -20,7 +20,7 @@
 </header>
 {% if persons %}
 {% for person in persons %}
-<section style="background-color: #eee;">
+<section style="background-color: #eee;" class="vh-100">
   <div class="container py-5">
     <div class="row">
       <div class="col-lg-4">
@@ -33,8 +33,8 @@
             <p class="text-muted mb-1">{{ person.contact }}</p>
             <p class="text-muted mb-4">{{ person.address1 }}</p>
             <div class="d-flex justify-content-center mb-2">
-              <a href="{% url 'update-info' person.id %}" class="btn btn-info ms-1">Update Info</a>
-               <a href="{% url 'order' %}" class="btn btn-success ms-1">My Order</a>
+              <a href="{% url 'update-info' person.id %}" class="btn btn-light border border-dark ms-1">Update Info</a>
+               <a href="{% url 'order' %}" class="btn btn-light border border-dark ms-1">My Order</a>
             </div>
           </div>
         </div>
@@ -130,7 +130,6 @@
       </div>
       <div class="col-lg-8">
         <div class="card">
-
           <div class="card-body text-center">
               <i class="fas fa-circle-exclamation fa-5x"></i>
               <h2 class="mt-2 mb-2">Update User Info</h2>

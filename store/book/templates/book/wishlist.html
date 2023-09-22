@@ -1,0 +1,115 @@
+{% extends 'layout/base.html'%}
+{% block content %}
+<header>
+  <!-- Heading -->
+  <div class="bg-light">
+    <div class="container py-4">
+      <!-- Breadcrumb -->
+      <nav class="d-flex">
+        <h6 class="mb-0">
+          <a href="{% url 'store-page' %}" class="text-dark">Home</a>
+          <span class="text-dark mx-2"> > </span>
+          <a href="{% url 'wishlist' %}" class="text-dark"><u>My Wishlist</u></a>
+        </h6>
+      </nav>
+      <!-- Breadcrumb -->
+    </div>
+  </div>
+  <!-- Heading -->
+</header>
+{% if messages %}
+  {% for message in messages %}
+    {% if message.tags == 'success' %}
+      <div class="alert alert-success alert-dismissible fade show text-center" role="alert" data-mdb-delay="3000" id="alert-added">
+        <strong>{{ message }}</strong> Successfully added to cart.
+        <button type="button" class="btn-close" data-mdb-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% else %}
+      <div class="alert alert-danger alert-dismissible fade show text-center" role="alert" data-mdb-delay="3000" id="alert-added-error">Something went wrong adding to cart.
+        <button type="button" class="btn-close" data-mdb-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endif %}
+  {% endfor %}
+{% endif %}
+{% for wish_list_item in wish_list %}
+{% if wish_list_item.wish_book.all %}
+<div class="row justify-content-center mb-3">
+          <div class="col-md-7">
+          	{% csrf_token %}
+            {% for wish_item in wish_list %}
+          	{% for item in wish_item.wish_book.all %}
+            <div class="card shadow-0 border rounded-3">
+              <div class="card-body">
+                <a href="{% url 'wishlist-item-remove' item.id %}" class="float-end"><i class="fa-solid fa-xmark fa-lg" style="color: #ff0000;"></i></a>
+                <div class="row g-0">
+                  <div class="col-xl-4 col-md-4 d-flex justify-content-center">
+                    <div class="bg-image hover-zoom ripple rounded ripple-surface me-md-3 mb-3 mb-md-0">
+                      <img src="{{ item.image.url }}" class="w-100" style="object-fit: scale-down;" height="280" />
+                      <a href="{% url 'book-detail' item.id %}">
+                        <div class="hover-overlay">
+                          <div class="mask" style="background-color: rgba(253, 253, 253, 0.15);"></div>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                  <div class="col-xl-8 col-md-8 col-sm-7">
+                    <h5>{{ item.title }}</h5>
+                    <p class="text mb-4 mb-md-0">
+                      {{ item.description }}
+                    </p>
+                    <div class="d-flex flex-row align-items-center mb-1">
+                      <h4 class="mb-1 me-1">₱ {{item.price}}</h4>
+                      <span class="text-danger"><s>$49.99</s></span>
+                    </div>
+                    <h6 class="text-success">Available</h6>
+                    <div class="mt-4">
+                      <a href="{% url 'add-to-cart-wishlist' item.id %}" class="btn btn-lg inline cart-button"> <i class="me-1 fa fa-shopping-basket"></i> Add to cart </a>
+                      
+                    </div>
+                  </div>
+                </div>
+             </div>
+         </div>
+         {% endfor %}
+         {% endfor %}
+     </div>
+</div>
+{% else %}
+<div class="text-center m-5">
+ 	<i class="fa-regular fa-heart fa-bounce fa-10x" style="color: #ff0000;"></i>
+  <h1 class="mt-4 ">Your wishlist is empty.</h1>
+  <h2 class="fw-normal">Start a new book haul now!</h2>
+  <a href="{% url 'store-page'%}" class="btn btn-light hover-shadow btn-lg">Shop Now</a>
+</div>
+{% endif %}
+{% endfor %}
+
+<script>
+	$(document).ready(function (){
+
+        CartNotif();
+
+    });
+    
+    function CartNotif(){
+         $.ajax({
+            url: '/cart-notification',
+            type: 'GET',
+            dataType: 'json',
+            success: function(data){
+                if (data.cart !== undefined && data.cart > 0){
+                     $("#item-count-notif").text(data.cart);
+                     
+                } else {
+                     $("#item-count-notif").empty();
+                }
+            },
+            error:function(error){
+                console.log(error)
+            },
+
+        });
+    }
+    
+</script>
+{% endblock %}

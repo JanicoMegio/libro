@@ -17,14 +17,17 @@ urlpatterns = [
     path('store-page/', views.store_page, name='store-page'),
     path('book-detail/<int:pk>', views.book_detail, name="book-detail"),
     path('new-book', views.new_books, name="new-books"),
+    path('wishlist', views.wish_list, name="wishlist"),
 
     path('cart-notification', views.cart_notification, name="cart-notification"),
     
     
     path('add-to-cart/<int:pk>', views.add_to_cart, name="add-to-cart"),
+    path('add-to-wishlist/<int:pk>', views.add_to_wishlist, name="add-to-wishlist"),
+    path('add-to-cart-wishlist/<int:pk>', views.add_to_cart_wishlist, name="add-to-cart-wishlist"),
     path('cart', views.view_cart, name="view-cart"),
 
-
+    path('wishlist-item-remove/<int:pk>', views.wishlist_item_remove, name="wishlist-item-remove"),
     path('delete-item/<int:pk>', views.delete_item_cart, name="delete-item"),
     path('minus-item/<int:pk>', views.minus_quantity, name="minus-item"),
     path('plus-item/<int:pk>', views.plus_quantity, name="plus-item"),
@@ -40,7 +43,21 @@ urlpatterns = [
     
     #path('create-checkout', views.create_checkout_session, name="create-checkout"),
     
+    # 3 ads path
+    path('online-bundles', views.sale_banner_1, name='online-bundles'),
+    path('fave-reads',views.sale_banner_2, name='fave-reads'),
+    path('special', views.sale_banner_3, name='special'),
+
+    #by_category -- path
     
+    path('category-novel', views.genre_novel, name="category-novel"),
+    path('category-romance', views.genre_romance, name="category-romance"),
+    path('category-science', views.genre_science, name="category-science"),
+    path('category-history', views.genre_history, name="category-history"),
+    path('shop-by-category/<int:pk>', views.shop_by_category, name="shop-by-category"),
+
+    path('search-item-data', views.search_book, name="search-item-data"),
+
 ]
 
 if settings.DEBUG:

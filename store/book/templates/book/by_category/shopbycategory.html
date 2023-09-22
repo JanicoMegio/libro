@@ -1,0 +1,23 @@
+{% block header %}
+<style>
+	.btn-hover{
+		transition: all .5s ease;
+		color: black;
+		border: 3px solid black;
+	}
+</style>
+{% endblock %}
+
+
+<section class="my-5 bg-light">
+	<h1 class="text-center p-4 mb-2">SHOP BY CATEGORY</h1>
+	<div class="container container-fluid">
+		<div class="row mx-auto">
+		{% for genres in genre %}
+			<div class="col-12 col-md-4 col-lg-4">
+				<a href="{% url 'shop-by-category' genres.id %}" class="btn btn-lg d-block p-3 btn-hover m-3"><h4 class="fw-normal">{{ genres.name }}</h4></a>
+			</div>
+		{% endfor %}
+		</div>
+	</div>
+</section>
