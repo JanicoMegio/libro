@@ -1,0 +1,14 @@
+{% extends 'layout/base.html' %}
+{% block content %}
+<div class="container">
+    <div class="row align-items-center" style="min-height: 100vh">
+        <div class="col-lg-12 text-center">
+            <i class="fa-regular fa-circle-xmark fa-10x"></i>
+            <h5 class="card-title m-4">Payment FAILED!</h5>
+            <p class="card-text">The payment has been cancelled!</p>
+            <a href="{% url 'view-cart'%}" class="btn btn-primary">Shopping Cart</a>
+            <a href="{% url 'store-page'%}" class="btn btn-link">Continue Shopping</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends 'layout/base.html' %}
+{% block title %} NOT FOUND! {% endblock %}
+{% block content %}
+<section>
+    <div class="container text-center mt-5">
+        <i class="fas fa-exclamation fa-9x"></i>
+        <h2 class="fw-normal mt-5 mb-3">PAGE NOT FOUND!</h2>
+        <a href="{% url 'store-page' %}" class="btn btn-dark">Back</a>
+    </div>
+</section>
+{% endblock %}

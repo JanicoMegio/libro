@@ -33,7 +33,8 @@ urlpatterns = [
     path('plus-item/<int:pk>', views.plus_quantity, name="plus-item"),
     
     path('checkout', views.checkout_item, name="checkout-item"),
-    path('payment-success', views.payment_success, name='payment-success'),
+    path('payment-success/', views.payment_success, name='payment-success'),
+    path('payment-failed/', views.payment_failed, name='payment-failed'),
     path('order', views.user_order, name="order"),
     path('order-received/<int:pk>', views.item_received, name="order-received"),
     path('order-history', views.order_history, name="order-history"),
@@ -42,6 +43,7 @@ urlpatterns = [
     path('create-review/<int:pk>', views.create_review, name="create-review"),
     
     #path('create-checkout', views.create_checkout_session, name="create-checkout"),
+    path('stripe-checkout', views.stripe_checkout, name='stripe-checkout'),
     
     # 3 ads path
     path('online-bundles', views.sale_banner_1, name='online-bundles'),

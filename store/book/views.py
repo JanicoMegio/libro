@@ -1,33 +1,51 @@
+import time
+import stripe
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse, HttpResponseServerError
-
-
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
-
 from django.contrib.auth.models import User
-
 from django.contrib import messages
-
 from django.db.models import Q
-
 from django.db import transaction
-
-#from django.contrib.auth.forms import UserCreationForm
-
+from django.urls import reverse
 from .forms import UserInfoForm, SortForm
-
 from .models import Book, Author, Genre, CartItems, OrderedItems, UserDetails, Order, CustomerReview, Wishlist
-
-
 from django.core.paginator import Paginator
-
-#from django.conf import settings
-
-#import stripe
+from django.conf import settings
 from decimal import Decimal
 # Create your views here.
+
+stripe.api_key = settings.STRIPE_SECRET_KEY
+
+@login_required(login_url="login")
+def stripe_checkout(request):
+    cart_items = CartItems.objects.filter(user_name=request.user)
+    items = []
+    for item in cart_items:
+        obj = {
+            'price_data': {
+                'currency': 'php',
+                'product_data': {
+                    'name': item.book_title.title,
+                },
+                'unit_amount': int(item.book_title.price * 100),
+            },
+            'quantity': item.quantity,
+        }
+        items.append(obj)
+    
+    checkout_session = stripe.checkout.Session.create(
+        payment_method_types=['card'],
+        line_items=items,
+        mode='payment',
+        success_url=settings.MY_DOMAIN + '/checkout',
+        cancel_url=settings.MY_DOMAIN + '/payment-failed',
+    )
+    
+    return redirect(checkout_session.url, code=303)
+
 
 def home(request):
     return HttpResponse('hello world')
@@ -40,7 +58,9 @@ def login_user(request):
         user =  authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('store-page/')
+            messages.success(request, "Login Successful")
+            time.sleep(3)
+            return redirect('store-page')
         else:
             print("error")
             messages.error(request, 'Invalid Login Credentials')
@@ -57,6 +77,8 @@ def register_user(request):
         if password1 == password2:
             user = User.objects.create_user(username=username, email=email, password=password1)
             messages.success(request, 'Create Successfully')
+            time.sleep(5)
+            return redirect('store-page')
         else:
             messages.error(request, 'Password not match')
 
@@ -106,8 +128,6 @@ def user_info(request):
     return render(request, 'book/create-info.html')
 
 
-
-
 @login_required(login_url="login")
 def update_user_info(request, pk):
 
@@ -129,10 +149,6 @@ def update_user_info(request, pk):
     return render(request, 'book/update-info.html', {'info':info})
 
 
-
-# all book listing start here 
-
-@login_required(login_url="login")
 def store_page(request):
     user = request.user
     book_new = Book.objects.all().order_by("-date")[:7]
@@ -166,13 +182,9 @@ def store_page(request):
     return render(request, 'book/store_page.html', context=context)
 
 
-
-
-
 @login_required(login_url="login")
 def new_books(request):
     return render(request, 'book/new_books.html')
-
 
 
 @login_required(login_url="login")
@@ -182,8 +194,6 @@ def wish_list(request):
     'wish_list':wish_list,
     }
     return render(request, 'book/wishlist.html', context)
-
-
 
 
 @login_required(login_url="login")
@@ -196,8 +206,6 @@ def cart_notification(request):
     return JsonResponse(response_data)
 
 # end here 
-
-
 #------------------------------------------------------- ADD TO CART FUNCTION
 
 @login_required(login_url="login")
@@ -217,7 +225,6 @@ def add_to_cart(request, pk):
     return JsonResponse(response_data)
     
 #-------------------------------------------------------- END HERE
-
 @login_required(login_url="login")
 def add_to_wishlist(request, pk):
     book = Book.objects.get(pk=pk)
@@ -253,6 +260,7 @@ def wishlist_item_remove(request, pk):
     wishlist = Wishlist.objects.get(user_name=current_user)
     wishlist.remove_from_wishlist(book=book)
     return redirect('wishlist')
+   
     
 @login_required(login_url="login")
 def view_cart(request):
@@ -264,9 +272,6 @@ def view_cart(request):
         'total':total,
     }
     return render(request, 'book/cart_page.html', context)
-
-
-
 
 
 @login_required(login_url="login")
@@ -281,7 +286,6 @@ def minus_quantity(request, pk):
         item.save()
     
     return redirect('view-cart')
-
 
 
 @login_required(login_url="login")
@@ -333,7 +337,6 @@ def checkout_item(request):
         return HttpResponseServerError(f"An error occurred: {str(e)}")
 
 
-
 @login_required(login_url="login")
 def user_order(request):
     user = request.user
@@ -348,9 +351,6 @@ def user_order(request):
     }
 
     return render(request, 'book/order.html', context=context)
-
-
-
 
 
 @login_required(login_url="login")
@@ -373,10 +373,6 @@ def order_history(request):
     'page': page,
     }
     return render(request, 'book/order_history.html', context)
-
-
-       
-
 
 
 @login_required(login_url="login")
@@ -421,42 +417,17 @@ def item_received(request, pk):
     return redirect('order')
 
 
-
-
-
 @login_required(login_url="login")
 def payment_success(request):
+    user_cart_items = CartItems.objects.filter(user_name=request.user)
+    if user_cart_items.exists():
+        return render(request, 'book/payment_error.html')
+    
     return render(request, 'book/success.html')
 
-
-
-
-
-# stripe.api_key = settings.STRIPE_API_KEY
-# @login_required(login_url="login")
-# @require_POST
-# def create_checkout_session(request):
-#     try:
-#         YOUR_DOMAIN = "http://127.0.0.1:8000"
-        
-#         user = request.user
-#         book = OrderedItems.objects.filter(user_name=user)
-#         checkout_session = stripe.checkout.Session.create(
-#             line_items=[
-#                 {
-#                     # Provide the exact Price ID (for example , pr_1234) of the product you want to sell
-#                     'name':'{{ book }}',
-#                     'price': '{{ book.total }}',
-#                 },
-#             ],
-#             mode='payment',
-#             success_url=YOUR_DOMAIN + '/success.html',
-#             cancel_url=YOUR_DOMAIN + '/cancel.html',
-#         )
-#     except Exception as e:
-#         return str(e)
-    
-#     return redirect(checkout_session.url, code=303)
+@login_required(login_url="login")
+def payment_failed(request):
+    return render(request, 'book/payment_failed.html')
 
 
 @login_required(login_url="login")
@@ -536,7 +507,6 @@ def genre_romance(request):
     return render(request, 'book/by_category/novel.html', context)
 
 
-
 def genre_science(request):
     books = Book.objects.filter(genre__name__in="science").order_by("?")
     sort_by = request.GET.get('sort_select')
@@ -584,7 +554,6 @@ def genre_history(request):
     return render(request, 'book/by_category/novel.html', context)
 
 
-
 def shop_by_category(request, pk):
     genre = Genre.objects.get(pk=pk)
     books = Book.objects.filter(genre__name=genre).all()
@@ -608,8 +577,6 @@ def shop_by_category(request, pk):
     'sort_by': sort_by,
     }
     return render(request, 'book/by_category/novel.html', context)
-
-
 
 #--------------------------------------------- all book by_category -- END HERE 
 
@@ -640,6 +607,7 @@ def sale_banner_1(request):
     }
     return render(request, 'book/by_category/novel.html', context)
 
+
 def sale_banner_2(request):
     books = Book.objects.all()
     sort_by = request.GET.get('sort_select')
@@ -663,6 +631,7 @@ def sale_banner_2(request):
     }
     return render(request, 'book/by_category/novel.html', context)
 
+
 def sale_banner_3(request):
     books = Book.objects.all()
     sort_by = request.GET.get('sort_select')
@@ -685,7 +654,6 @@ def sale_banner_3(request):
     'sort_by': sort_by,
     }
     return render(request, 'book/by_category/novel.html', context)
-
 
 #--------------------------------------------- SALE BANNER --- END HERE 
 

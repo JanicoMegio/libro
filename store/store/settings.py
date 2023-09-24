@@ -59,7 +59,7 @@ ROOT_URLCONF = 'store.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -137,13 +137,11 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-STRIPE_API_KEY = "sk_test_51NlQVoJXIZpi3SrN2iKy19TTmiDhuW5PAWbMjYoXA4Rxvw76XAJMytWviKPAK9TfDB2lf2pw6TY8cqjUkBIz4DU400g9qHDbZE"
+#STRIPE_API_KEY = 'sk_test_51NlQVoJXIZpi3SrN2iKy19TTmiDhuW5PAWbMjYoXA4Rxvw76XAJMytWviKPAK9TfDB2lf2pw6TY8cqjUkBIz4DU400g9qHDbZE'
+STRIPE_PUBLIC_KEY = os.environ.get('STRIPE_TEST_PUBLIC')
+STRIPE_SECRET_KEY = 'sk_test_51NlQVoJXIZpi3SrN2iKy19TTmiDhuW5PAWbMjYoXA4Rxvw76XAJMytWviKPAK9TfDB2lf2pw6TY8cqjUkBIz4DU400g9qHDbZE'
 
-
-SESSION_ENGINE = 'django.contrib.sessions.backends.db'
-SESSION_COOKIE_SECURE = True
-SESSION_EXPIRE_AT_BROWSER_CLOSE = False
-
+MY_DOMAIN = 'http://localhost:8000'
 
 LOGIN_URL = '/login'
 
