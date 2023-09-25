@@ -1,10 +1,11 @@
-{% extends 'authentication/base.html' %}
+{% extends 'layout/base.html' %}
+{% block title %}Libro.{% endblock %}
 {% block content %}
   <div class="container">
     <div class="row">
       <h1 class="display-1 mt-5 p-5 text-center"><a href="{% url 'store-page' %}" class="text-dark">Libro.</a></h1>
-      <div class="col-5 mx-auto">
-        <h3 class="m-2">Login</h3>
+      <div class="col-sm-12 col-lg-5 mx-auto">
+        <h6 class="m-2">Sign In to Your Account</h3>
         <form method="post">
           {% csrf_token %}
           <div class="form-outline mb-4">
@@ -15,30 +16,28 @@
             <input type="password" name="password" class="form-control" required />
             <label class="form-label">Password</label>
           </div>
-          <div class="row mb-4">
-            <div class="col">
-              <a href="#!">Forgot password?</a>
-            </div>
-          </div>
-          <button type="submit" class="btn btn-primary btn-block mb-4">Sign in</button>
+          <button type="submit" class="btn btn-lg btn-light btn-block mb-4 fw-normal"><span class="h6 text-capitalize">Sign in <i class="fas fa-arrow-right-to-bracket"></i></span></button>
           <div class="text-center">
             <p>
-              Not a member? <a href="/register">Register</a>
-            </p>
+              Not a member? <a href="/register" class="fw-bold text-dark"><u>Register</u></a>
+             </p>
             <p>or sign up with:</p>
-            <button type="button" class="btn btn-link btn-floating mx-1"><i class="fab fa-facebook-f"></i></button>
+            <button type="button" class="btn btn-link btn-floating text-dark mx-1"><i class="fab fa-facebook-f"></i></button>
 
-            <button type="button" class="btn btn-link btn-floating mx-1"><i class="fab fa-google"></i></button>
+            <button type="button" class="btn btn-link btn-floating text-dark mx-1"><i class="fab fa-google"></i></button>
 
-            <button type="button" class="btn btn-link btn-floating mx-1"><i class="fab fa-twitter"></i></button>
+            <button type="button" class="btn btn-link btn-floating text-dark mx-1"><i class="fab fa-twitter"></i></button>
 
-            <button type="button" class="btn btn-link btn-floating mx-1"><i class="fab fa-github"></i></button>
+            <button type="button" class="btn btn-link btn-floating text-dark mx-1"><i class="fab fa-github"></i></button>
           </div>
         </form>
         {% if messages %}
-          {% for message in messages %}
-            <div class="alert alert-danger" role="alert">{{ message }}</div>
-          {% endfor %}
+        {% for message in messages %}
+        <div class="alert alert-danger alert-dismissible fade show text-center" role="alert" data-mdb-delay="3000" id="alert-added" >
+          <strong>{{message}}</strong>
+        <button type="button" class="btn-close" data-mdb-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
         {% endif %}
       </div>
     </div>

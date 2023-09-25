@@ -58,12 +58,9 @@ def login_user(request):
         user =  authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            messages.success(request, "Login Successful")
-            time.sleep(3)
             return redirect('store-page')
         else:
-            print("error")
-            messages.error(request, 'Invalid Login Credentials')
+            messages.error(request, 'Invalid User')
     return render(request, 'authentication/login.html')
 
 
@@ -76,8 +73,7 @@ def register_user(request):
         password2 = request.POST.get('password2')
         if password1 == password2:
             user = User.objects.create_user(username=username, email=email, password=password1)
-            messages.success(request, 'Create Successfully')
-            time.sleep(5)
+            login(request, user)
             return redirect('store-page')
         else:
             messages.error(request, 'Password not match')
@@ -265,11 +261,13 @@ def wishlist_item_remove(request, pk):
 @login_required(login_url="login")
 def view_cart(request):
     user = request.user
-    items = CartItems.objects.filter(user_name=user)  
+    items = CartItems.objects.filter(user_name=user)
+    detail = UserDetails.objects.filter(user_name=user).first()
     total = sum(float(item.total_cart_items()) for item in items)
     context = {
         'items': items,
         'total':total,
+        'detail': detail,
     }
     return render(request, 'book/cart_page.html', context)
 
