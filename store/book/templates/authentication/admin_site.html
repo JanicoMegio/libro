@@ -1,0 +1,151 @@
+
+{% extends 'authentication/base.html' %}
+{% block content %}
+{% if user.is_superuser %}
+{% include 'layout/admin-navbar.html' %}
+<section class="mb-3">
+    <div class="container">
+        <div class="row">
+            <div class="col-6 col-lg-3 mt-3">
+                <div class="card-body text-center hover-shadow border border-2 rounded-3 p-5">
+                    <h1 class="">{{count_users}}</h1>
+                    <p>Users</p>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3 mt-3">
+                <div class="card-body text-center hover-shadow border border-2 rounded-3 p-5">
+                    <h1 class="">{{ sales|floatformat:2 }}</h1>
+                    <p>Sales</p>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3 mt-3">
+                <div class="card-body text-center hover-shadow border border-2 rounded-3 p-5">
+                    <h1 class="">{{ books }}</h1>
+                    <p>Books</p>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3 mt-3">
+                <div class="card-body text-center hover-shadow border border-2 rounded-3 p-5">
+                    <h1 class="">{{ ordered_items.count }}</h1>
+                    <p>Orders</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="mb-5">
+    <div class="container">
+        <div class="row ">
+            <div class="col-12 col-lg-4 text-center hover-shadow rounded-6 border">
+                <div class="inner-container table-responsive">
+                    <h3 class="mt-3">Delivered</h3>
+                    <p class="text-muted"><small>Total Items: ({{ count_order.count }})</small></p>
+                    <table class="table table-sm">
+                        <thead>
+                          <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Total</th>
+                            <th scope="col">Status</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                        {% for order in count_order %}
+                          <tr>
+                            <th scope="row">{{ forloop.counter }}</th>
+                            <td>{{order.total}}</td>
+                            <td><span class="badge bg-success ms-2">Delivered</span></td>
+                          </tr>
+                        {% endfor %}
+                        </tbody>
+                      </table>
+                </div>
+                <a class="btn" href="#">See Details</a>
+            </div>
+            <div class="col-12 col-lg-4 text-center rounded-3">
+                <div class="row">
+                    <div class="inner-container hover-shadow rounded-9 mb-3 table-responsive">
+                        <h3 class="mt-3">Out of Delivery</h3>
+                        <p><small>To confirm ({{ order_confirm.count }})</small></p>
+                        <table class="table table-sm">
+                            <thead>
+                              <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Title</th>
+                                <th scope="col">Qty</th>
+                                <th scope="col">Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in ordered_items %}
+                                {% if item.item_status == "order confirm" %}
+                              <tr>
+                                <th scope="row">{{ forloop.counter }}</th>
+                                <td>{% for book in item.buy_items.all %}{{ book.book_order.title }}
+                                    {% if not forloop.last %}, {% endif %}
+                                    {% endfor %}
+                                </td>
+                                <td>{{ item.total_quantity }}</td>
+                                <td><a href="{% url 'item-status-ofd' item.id %}" class="hover-shadow px-4 py-2 rounded-4 text-dark">Confirm</a></td>
+                              </tr>
+                              {% endif %}
+                              {% endfor %}
+                            </tbody>
+                          </table>
+                          <a class="btn mb-3" href="#">See Details</a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="inner-container hover-shadow rounded-9">
+                        <h3 class="mt-3">Unconfirmed</h3>
+                        <p><small>Number of out of delivery items </small></p>
+                        <div class="card-body mb-3">
+                            <h1>{{ num_ofd }}</h1> 
+                            <a href="#" class="btn">See Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-lg-4 text-center border rounded-6 hover-shadow">
+                <div class="inner-container table-responsive">
+                    <h3 class="mt-3">Pending</h3>
+                    <p><small>To confirm ({{unconfirmed}})</small></p>
+                    <table class="table table-sm">
+                        <thead>
+                          <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Title</th>
+                            <th scope="col">Qty</th>
+                            <th scope="col">Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in ordered_items %}
+                            {% if item.item_status == "pending" %}
+                          <tr>
+                            <th scope="row">{{ forloop.counter }}</th>
+                            <td>{% for book in item.buy_items.all %}{{ book.book_order.title }}
+                                {% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td>{{ item.total_quantity }}</td>
+                            <td><a href="{% url 'item-status' item.id  %}" class="hover-shadow px-4 py-2 rounded-4 text-dark">Confirm</a></td>
+                          </tr>
+                          {% endif %}
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                      <a href="#" class="btn mb-3">See Details</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% else %}
+<section>
+    <div class="container text-center mt-5">
+        <h1>PAGE NOT FOUND! 403</h1>
+        <p>back to shop. <a href="{% url 'store-page'%}">Back</a></p>
+    </div>
+</section>
+{% endif %}
+{% endblock %}

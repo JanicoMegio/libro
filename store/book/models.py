@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from django.utils.text import slugify
+from django.db.models import Sum
 
 # Create your models here.
 
@@ -71,7 +72,12 @@ class Book(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     review_star = models.PositiveIntegerField(default=1)
-
+    slug = models.CharField(max_length=1000, null=True, blank=True)
+    
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title +"-"+ self.ISBN)
+        return super().save(*args, **kwargs)
 
     
     def __str__(self):
@@ -110,7 +116,8 @@ ORDER_STATUS = (
     ('pending', 'PENDING'),
     ('order confirm', 'ORDER CONFIRM'),
     ('out of delivery', 'OUT OF DELIVERY'),
-    ('delivered', 'DELIVERED'),
+    ('to received', 'TO RECEIVED'),
+    ('completed', 'COMPLETED'),
 )
 
 class Order(models.Model):
@@ -132,6 +139,8 @@ class OrderedItems(models.Model):
     item_status = models.CharField(max_length=20, choices=ORDER_STATUS, default='pending')
     received = models.BooleanField(default=False)
    
+    def total_quantity(self):
+        return self.buy_items.aggregate(Sum('qty'))['qty__sum'] or 0
     
     def __str__(self):
         return f"Order_by: {self.user_name} total: {self.total} Date:{self.order_date}"

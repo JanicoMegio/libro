@@ -1,0 +1,42 @@
+
+<div class="p-3 text-center bg-white border-bottom sticky-top ">
+    <div class="container">
+      <div class="row gy-3">
+        <!-- Left elements -->
+        <div class="col-lg-2 col-sm-2 col-4 align-self-center">
+          <a href="{% url 'store-page'%}" class="float-start">
+            <h1 class="fw-normal text-dark">Libro. <small class="text-muted" style="font-size: .9rem;">ADMIN</small></h1>
+          </a>
+        </div>
+        <!-- Left elements -->
+
+        <!-- Center elements -->
+        <div class="order-lg-last col-lg-10 col-sm-8 col-8 align-self-center float-end">
+          <div class="d-flex float-end">
+            <div class="dropdown me-1 border rounded py-1 px-3 ">
+              <a
+                class="nav-link d-flex align-items-center dropdown-toggle"
+                href="#"
+                role="button"
+                target="_blank"
+                id="dropdownMenuLink"
+                data-mdb-toggle="dropdown"
+                aria-expanded="false"
+              >
+              <!-- account -->
+                <i class="fas fa-user-alt m-1 me-md-2"></i>
+              <!-- end -->
+              </a>
+             
+              <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                <li><a class="dropdown-item" href="{% url 'user-account' %}">{{user.username}}</a></li>
+                <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+              </ul>
+            </div>
+        
+          </div>
+        </div>
+        <!-- Center elements -->
+      </div>
+    </div>
+  </div>

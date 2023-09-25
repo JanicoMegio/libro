@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -42,6 +43,7 @@ INSTALLED_APPS = [
     'book.apps.BookConfig',
 
     'fontawesomefree',
+    
 ]
 
 MIDDLEWARE = [
@@ -137,13 +139,18 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-#STRIPE_API_KEY = 'sk_test_51NlQVoJXIZpi3SrN2iKy19TTmiDhuW5PAWbMjYoXA4Rxvw76XAJMytWviKPAK9TfDB2lf2pw6TY8cqjUkBIz4DU400g9qHDbZE'
 STRIPE_PUBLIC_KEY = os.environ.get('STRIPE_TEST_PUBLIC')
 STRIPE_SECRET_KEY = 'sk_test_51NlQVoJXIZpi3SrN2iKy19TTmiDhuW5PAWbMjYoXA4Rxvw76XAJMytWviKPAK9TfDB2lf2pw6TY8cqjUkBIz4DU400g9qHDbZE'
 
 MY_DOMAIN = 'http://localhost:8000'
 
 LOGIN_URL = '/login'
+
+JAZZMIN_SETTINGS = {
+    "site_title": "Libro.",
+    "site_header": "Libro.",
+    "site_brand": "Libro. ",
+}
 
 
 

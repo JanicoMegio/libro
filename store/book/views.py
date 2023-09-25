@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.contrib.auth.models import User
 from django.contrib import messages
-from django.db.models import Q
+from django.db.models import Q, Sum
 from django.db import transaction
 from django.urls import reverse
 from .forms import UserInfoForm, SortForm
@@ -64,7 +64,6 @@ def login_user(request):
     return render(request, 'authentication/login.html')
 
 
-
 def register_user(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -81,6 +80,43 @@ def register_user(request):
     return render(request, 'authentication/register.html')
 
 
+@login_required(login_url="login")
+def sale_dashboard(request):
+    count_users = User.objects.all().count()
+    sales = OrderedItems.objects.filter(received=True).aggregate(Sum('total'))['total__sum']
+    count_order = OrderedItems.objects.filter(received=True)[:12]
+    order_confirm = OrderedItems.objects.filter(item_status='order confirm')[:12]
+    num_ofd = OrderedItems.objects.filter(item_status='to received').count()
+    unconfirmed = OrderedItems.objects.filter(item_status='pending').count()
+    ordered_items = OrderedItems.objects.all()
+    books = Book.objects.all().count()
+    if sales is None:
+        sales = 0
+    context = {
+        'count_users': count_users,
+        'sales': sales,
+        'books': books,
+        'unconfirmed': unconfirmed,
+        'order_confirm': order_confirm,
+        'count_order':  count_order,
+        'ordered_items': ordered_items,
+        'num_ofd': num_ofd,
+        
+    }
+    return render(request, 'authentication/admin_site.html', context)
+
+
+def item_status(request, pk):
+    order_status = OrderedItems.objects.get(pk=pk)
+    order_status.item_status = "order confirm"
+    order_status.save()
+    return redirect('sales')
+
+def item_status_ofd(request, pk):
+    order_status = OrderedItems.objects.get(pk=pk)
+    order_status.item_status = "to received"
+    order_status.save()
+    return redirect('sales')
 # user account details 
 
 @login_required(login_url="login")
@@ -354,7 +390,7 @@ def user_order(request):
 @login_required(login_url="login")
 def order_history(request):
     user = request.user
-    reviewed_item = Order.objects.filter(user_name=user, review=False)
+    reviewed_item = Order.objects.filter(user_name=user, review=False)[:5]
     user_review = CustomerReview.objects.filter(user_name=user).order_by('-date')
     order_list = OrderedItems.objects.filter(user_name=user, received=True)
     
@@ -408,6 +444,7 @@ def item_received(request, pk):
     try:
         item = OrderedItems.objects.get(id=pk)
         item.received = True
+        item.item_status = "completed"
         item.save()
 
     except OrderedItems.DoesNotExist:

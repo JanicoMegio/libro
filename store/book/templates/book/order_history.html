@@ -6,6 +6,9 @@
     background-color: black !important;
     color: white !important;;
   }
+  body {
+	background-color:#eee; 
+  }
 </style>
 
 {% endblock %}
@@ -17,7 +20,7 @@
       <!-- Breadcrumb -->
       <nav class="d-flex">
         <h6 class="mb-0">
-          <a href="/store-page" class="text-dark"><i class="fa-solid fa-house"></i> Home</a>
+          <a href="{% url 'store-page' %}" class="text-dark"><i class="fa-solid fa-house"></i> Home</a>
           <span class="text-dark mx-2"> > </span>
           <a href="{% url 'user-account' %}" class="text-dark"> <i class="fas fa-user"></i
         > Account</a>
@@ -32,7 +35,7 @@
   </div>
   <!-- Heading -->
 </header>
-<section style="background-color: #eee;" class="pb-5">
+<section style="background-color: #eee;" class="pb-5 vh-100">
 	<div class="container">
 		<div class="row">
 			<div class="col-lg-6 col-sm-12">
@@ -41,6 +44,7 @@
 						<h2 class="fw-normal text-center">Reviewed Products</h2>
 					</div>
 					<hr>
+					{% if page %}
 					{% for item in page %}
 					<div class="card-body">
 						<div class="d-flex">
@@ -56,6 +60,11 @@
 						</div>
 					</div>
 					{% endfor %}
+					{% else %}
+					<div class="card-body text-center">
+						<h3>No Reviews</h3>
+					</div>
+					{% endif %}
 					<div class="container m-3">
 						<nav aria-label="...">
 						  <ul class="pagination justify-content-center">
