@@ -179,7 +179,7 @@ def update_user_info(request, pk):
 
 def store_page(request):
     user = request.user
-    book_new = Book.objects.all().order_by("-date")[:7]
+    book_new = Book.objects.filter(status='new').order_by("-date")[:7]
     books = Book.objects.all().order_by("?")[:6]
     featured_author = Author.objects.filter(~Q(author_image='')).order_by("?")[:1]
     genre = Genre.objects.all().order_by('?')[:6]
