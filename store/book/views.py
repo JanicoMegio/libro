@@ -181,7 +181,7 @@ def store_page(request):
     user = request.user
     book_new = Book.objects.all().order_by("-date")[:7]
     books = Book.objects.all().order_by("?")[:6]
-    featured_author = Author.objects.all().order_by("?")[:1]
+    featured_author = Author.objects.filter(~Q(author_image='')).order_by("?")[:1]
     genre = Genre.objects.all().order_by('?')[:6]
     trend = Book.objects.all().order_by('-review_star')[:6]
 
@@ -462,15 +462,15 @@ def payment_failed(request):
 
 
 @login_required(login_url="login")
-def book_detail(request, pk):
+def book_detail(request, slug):
     try:
         user = request.user
-        books = Book.objects.get(pk=pk)
-        book_order_item = Order.objects.filter(book_order=pk).count()
-        wish_item = Wishlist.objects.filter(user_name=user, wish_book=pk).first()
+        books = Book.objects.get(slug=slug)
+        book_order_item = Order.objects.filter(book_order=books.id).count()
+        wish_item = Wishlist.objects.filter(user_name=user, wish_book=books.id).first()
         genres = [genre_list.name for genre_list in books.genre.all()]
         related = Book.objects.filter(genre__name__in=genres).order_by("?")[:5]
-        item_review = CustomerReview.objects.filter(item_review__book_order=pk).order_by("-date")[:3]
+        item_review = CustomerReview.objects.filter(item_review__book_order=books.id).order_by("-date")[:3]
     
     except Book.DoesNotExist:
         return HttpResponse('Item Not Found!')
@@ -489,8 +489,8 @@ def book_detail(request, pk):
 
 #-------------------------------------------- all book by genre -- start here 
 
-def genre_novel(request):
-    books = Book.objects.filter(genre__name="Novel")
+def genre_manga(request):
+    books = Book.objects.filter(genre__name="Manga")
     sort_by = request.GET.get('sort_select')
     if sort_by == 'lth':
         books = books.order_by('price')
@@ -501,7 +501,7 @@ def genre_novel(request):
     elif sort_by == 'new':
         books = books.order_by('-date')
 
-    genre = "Novel"
+    genre = "Manga"
     items_per_page = 12
     paginator = Paginator(books, items_per_page)
     page_number = request.GET.get('page')
@@ -516,8 +516,8 @@ def genre_novel(request):
     return render(request, 'book/by_category/novel.html', context)
 
 
-def genre_romance(request):
-    books = Book.objects.filter(genre__name="Romance").order_by("?")
+def genre_fiction(request):
+    books = Book.objects.filter(genre__name="Fiction").order_by("?")
     sort_by = request.GET.get('sort_select')
     if sort_by == 'lth':
         books = books.order_by('price')
@@ -527,7 +527,7 @@ def genre_romance(request):
         books = books.order_by('-review_star')
     elif sort_by == 'new':
         books = books.order_by('-date')
-    genre = "Romance"
+    genre = "Fiction"
     items_per_page = 12
     paginator = Paginator(books, items_per_page)
     page_number = request.GET.get('page')
@@ -541,9 +541,10 @@ def genre_romance(request):
     return render(request, 'book/by_category/novel.html', context)
 
 
-def genre_science(request):
-    books = Book.objects.filter(genre__name__in="science").order_by("?")
+def genre_non_fiction(request):
+    books = Book.objects.filter(genre__name="Non-fiction").order_by("?")
     sort_by = request.GET.get('sort_select')
+    genre = "Non-fiction"
     if sort_by == 'lth':
         books = books.order_by('price')
     elif sort_by == 'htl':
@@ -565,8 +566,9 @@ def genre_science(request):
     return render(request, 'book/by_category/novel.html', context)
 
 
-def genre_history(request):
-    books = Book.objects.filter(genre__name__in="history").order_by("?")
+def genre_psychology(request):
+    books = Book.objects.filter(genre__name="Psychology").order_by("?")
+    genre = "Psychology"
     sort_by = request.GET.get('sort_select')
     if sort_by == 'lth':
         books = books.order_by('price')

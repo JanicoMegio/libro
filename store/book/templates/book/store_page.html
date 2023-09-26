@@ -1,4 +1,5 @@
 {% extends 'layout/base.html' %}
+{%load humanize %}
 {% load static %}
 {% block title %}
   Libro.
@@ -40,16 +41,16 @@
     </div>
     <div class="carousel-inner">
       <div class="carousel-item active bg-dark" data-mdb-interval="2000">
-        <img src="{% static 'images/Freeshipping.png' %}" class="d-none d-lg-block w-100" alt="Free Shipping" />
-        <img src="{% static 'images/smfree.png' %}" class="d-block d-lg-none w-100" alt="Free Shipping" />
+        <img src="{% static 'images/banner/Freeshipping.png' %}" class="d-none d-lg-block w-100" alt="Free Shipping" />
+        <img src="{% static 'images/banner/smfree.png' %}" class="d-block d-lg-none w-100" alt="Free Shipping" />
       </div>
       <div class="carousel-item" data-mdb-interval="2000">
-        <img src="{% static 'images/thebestbooks2023.png'%}" class="d-none d-lg-block w-100" alt="BestBooks2023"/>
-        <img src="{% static 'images/smbest.png'%}" class="d-block d-lg-none w-100" alt="BestBooks2023"/>
+        <img src="{% static 'images/banner/thebestbooks2023.png'%}" class="d-none d-lg-block w-100" alt="BestBooks2023"/>
+        <img src="{% static 'images/banner/smbest.png'%}" class="d-block d-lg-none w-100" alt="BestBooks2023"/>
       </div>
       <div class="carousel-item" data-mdb-interval="2000">
-        <img src="{% static 'images/Sale.png'%}" class="d-none d-lg-block w-100" alt="Sale"/>
-        <img src="{% static 'images/smsale.png'%}" class="d-block d-lg-none w-100" alt="Sale"/>
+        <img src="{% static 'images/banner/Sale.png'%}" class="d-none d-lg-block w-100" alt="Sale"/>
+        <img src="{% static 'images/banner/smsale.png'%}" class="d-block d-lg-none w-100" alt="Sale"/>
       </div>
     </div>
     <button class="carousel-control-prev" type="button" data-mdb-target="#carouselExampleTouch" data-mdb-slide="prev">
@@ -74,8 +75,8 @@
       <div class="row">
         <div class="col-lg-3 col-md-6 col-6">
           <div class="card hover-shadow">
-            <a href="{% url 'category-novel' %}" class="text-center bg-light">
-              <img src="{% static 'images/categories/manga.jpg' %}" style="object-fit:scale-down;" height="220"/></a>
+            <a href="{% url 'category-manga' %}" class="text-center bg-light">
+              <img src="{% static 'images/categories/manga.png' %}" style="object-fit:scale-down;" height="220"/></a>
             <div class="card-body">
               <h4 class="text-center fw-bold">Manga</h4>
             </div>
@@ -83,8 +84,8 @@
         </div>
         <div class="col-lg-3 col-md-6 col-6">
           <div class="card hover-shadow">
-            <a href="{% url 'category-novel' %}" class="text-center bg-light">
-              <img src="{% static 'images/categories/fiction.jpg' %}" style="object-fit:scale-down;" height="220"/></a>
+            <a href="{% url 'category-fiction' %}" class="text-center bg-light">
+              <img src="{% static 'images/categories/fiction.png' %}" style="object-fit:scale-down;" height="220"/></a>
             <div class="card-body">
               <h4 class="text-center fw-bold">Fiction</h4>
             </div>
@@ -92,8 +93,8 @@
         </div>
         <div class="col-lg-3 col-md-6 col-6">
           <div class="card hover-shadow">
-            <a href="{% url 'category-novel' %}" class="text-center bg-light">
-              <img src="{% static 'images/categories/non-fiction.jpg' %}" style="object-fit:scale-down;" height="220"/></a>
+            <a href="{% url 'category-non_fiction' %}" class="text-center bg-light">
+              <img src="{% static 'images/categories/non-fiction.png' %}" style="object-fit:scale-down;" height="220"/></a>
             <div class="card-body">
               <h4 class="text-center fw-bold">Non-Fiction</h4>
             </div>
@@ -101,8 +102,8 @@
         </div>
         <div class="col-lg-3 col-md-6 col-6">
           <div class="card hover-shadow">
-            <a href="{% url 'category-novel' %}" class="text-center bg-light">
-              <img src="{% static 'images/categories/psychology.jpg' %}" style="object-fit:scale-down;" height="220"/></a>
+            <a href="{% url 'category-psychology' %}" class="text-center bg-light">
+              <img src="{% static 'images/categories/psychology.png' %}" style="object-fit:scale-down;" height="220"/></a>
             <div class="card-body">
               <h4 class="text-center fw-bold">Psychology</h4>
             </div>

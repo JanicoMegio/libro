@@ -1,4 +1,5 @@
 {% extends 'layout/base.html' %}
+{% load humanize %}
 {% block title %}{{books.title}}{% endblock %}
 {% block header %}
 <style>
@@ -103,7 +104,7 @@
           </div>
           <hr />
           <div class="mb-3 d-inline">
-            <span class="h2">₱{{books.price}}</span>
+            <span class="h2">₱ {{ books.price|intcomma }}</span>
           </div>
           <div class="d-inline mx-4"> 
              <button class="btn btn-lg inline cart-button " id="add-cart-btn" data-item-id = {{books.id }}> <i class="me-1 fa fa-shopping-basket"></i> Add to cart </button>
@@ -159,7 +160,7 @@
           <div class="tab-content" id="ex1-content">
             <div class="tab-pane fade show active" id="ex1-pills-1" role="tabpanel" aria-labelledby="ex1-tab-1">
               <p>
-                {{books.description}}
+                {{books.description|linebreaks}}
               </p>
             
               <table class="table border mt-3 mb-2">
@@ -242,17 +243,17 @@
               <h5 class="card-title">Related Products</h5>
               {% for book in related %}
               <div class="d-flex mb-3">
-                <a href="{% url 'book-detail' book.id %}" class="me-3">
+                <a href="{% url 'book-detail' book.slug %}" class="me-3">
                   <img src="{{book.image.url}}" style="min-width: 96px; height: 96px;" class="img-md img-thumbnail" />
                 </a>
                 <div class="info">
-                  <a href="{% url 'book-detail' book.id %}" class="nav-link mb-1">
+                  <a href="{% url 'book-detail' book.slug %}" class="nav-link mb-1">
                     {{ book.title }} <br />
                     {% for author in book.book_author.all %}
                     by: {{author}}
                     {% endfor %}
                   </a>
-                  <p class="text-dark fw-normal">₱{{book.price}}</p>
+                  <p class="text-dark fw-normal">₱ {{book.price|intcomma}}</p>
                 </div>
               </div>
               {% endfor %}

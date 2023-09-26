@@ -26,7 +26,7 @@ class UserDetails(models.Model):
 class Author(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField(max_length=3000)
-    author_image = models.ImageField(upload_to="author_images")
+    author_image = models.ImageField(upload_to="author_images", null=True, blank=True)
 
     def __str__(self):
         return self.name

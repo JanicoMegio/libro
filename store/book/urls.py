@@ -18,7 +18,7 @@ urlpatterns = [
     path('user-info', views.user_info, name="user-info"),
 
     path('', views.store_page, name='store-page'),
-    path('book-detail/<int:pk>', views.book_detail, name="book-detail"),
+    path('book-detail/<slug:slug>', views.book_detail, name="book-detail"),
     path('new-book', views.new_books, name="new-books"),
     path('wishlist', views.wish_list, name="wishlist"),
 
@@ -55,10 +55,10 @@ urlpatterns = [
 
     #by_category -- path
     
-    path('category-novel', views.genre_novel, name="category-novel"),
-    path('category-romance', views.genre_romance, name="category-romance"),
-    path('category-science', views.genre_science, name="category-science"),
-    path('category-history', views.genre_history, name="category-history"),
+    path('category-manga', views.genre_manga, name="category-manga"),
+    path('category-fiction', views.genre_fiction, name="category-fiction"),
+    path('category-non_fiction', views.genre_non_fiction, name="category-non_fiction"),
+    path('category-psychology', views.genre_psychology, name="category-psychology"),
     path('shop-by-category/<int:pk>', views.shop_by_category, name="shop-by-category"),
 
     path('search-item-data', views.search_book, name="search-item-data"),

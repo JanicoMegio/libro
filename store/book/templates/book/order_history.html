@@ -1,4 +1,5 @@
 {% extends 'layout/base.html' %}
+{% block title %}{{user.username}} | History{%endblock%}
 {% block header %}
 
 <style>
@@ -103,7 +104,7 @@
 						<h2 class="fw-normal text-center">Purchased History</h2>
 					</div>
 					<hr>
-					{% if reviewed_item %}
+					{% if order_list %}
 						{% for item in order_list %}
 							{% for order in item.buy_items.all %}
 								{%if not order.review %}
@@ -119,9 +120,9 @@
 						{% endfor %}
 					{% else %}
 						<div class="card-body text-center">
-							<i class="fa-solid fa-triangle-exclamation fa-bounce fa-5x"></i>
-							<h3 class=" text-muted fw-normal">No Purchase History</h3>
-							<a href="{% url 'store-page'%}" class="btn btn-lg btn-success justify-content-center">Buy Now</a>
+							<i class="fa-solid fa-triangle-exclamation fa-bounce fa-3x"></i>
+							<h3 class="text-muted">No Purchase History</h3>
+							<a href="{% url 'store-page'%}" class="btn btn-lg btn-light justify-content-center">Buy Now</a>
 						</div>
 					{% endif %}
 				</div>

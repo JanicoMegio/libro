@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
     
     'book.apps.BookConfig',
 
@@ -149,8 +150,27 @@ LOGIN_URL = '/login'
 JAZZMIN_SETTINGS = {
     "site_title": "Libro.",
     "site_header": "Libro.",
-    "site_brand": "Libro. ",
+    "site_brand": "Libro.",
+    "welcome_sign": "Libro. Administrator login",
+    "site_logo": "images/logo.png",
+    "site_logo_classes": "img-circle",
+    "site_icon": None,
+    "topmenu_links": [
+
+        # Url that gets reversed (Permissions can be added)
+        {"name": "Home",  "url": "admin:index", "permissions": ["auth.view_user"]},
+        
+        {"name": "View site",  "url": "store-page", "permissions": ["auth.view_user"]},
+
+        # model admin to link to (Permissions checked against model)
+        {"model": "auth.User"},
+
+        # App with dropdown menu to all its models pages (Permissions checked against models)
+        {"app": "books"},
+    ],
+
 }
+
 
 
 
