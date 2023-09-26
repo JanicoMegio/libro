@@ -33,7 +33,6 @@
               
               <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                 {% if user.is_superuser %}
-                <li><a class="dropdown-item" href="/admin">ADMINISTRATOR</a></li>
                 <li><a class="dropdown-item" href="{% url 'sales' %}">Dashboard</a></li>  
                 {% endif %}
                 <li><a class="dropdown-item" href="{% url 'user-account' %}">{{user.username}}</a></li>

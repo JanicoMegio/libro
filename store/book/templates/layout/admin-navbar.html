@@ -3,15 +3,15 @@
     <div class="container">
       <div class="row gy-3">
         <!-- Left elements -->
-        <div class="col-lg-2 col-sm-2 col-4 align-self-center">
+        <div class="col-lg-3 col-4 align-self-center">
           <a href="{% url 'store-page'%}" class="float-start">
-            <h1 class="fw-normal text-dark">Libro. <small class="text-muted" style="font-size: .9rem;">ADMIN</small></h1>
+            <h1 class="fw-normal text-dark">Libro. <small class="text-muted" style="font-size: 1rem;">Dashboard</small></h1>
           </a>
         </div>
         <!-- Left elements -->
 
         <!-- Center elements -->
-        <div class="order-lg-last col-lg-10 col-sm-8 col-8 align-self-center float-end">
+        <div class="order-lg-last col-lg-9 col-sm-8 col-8 align-self-center float-end">
           <div class="d-flex float-end">
             <div class="dropdown me-1 border rounded py-1 px-3 ">
               <a
@@ -29,7 +29,8 @@
               </a>
              
               <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                <li><a class="dropdown-item" href="{% url 'user-account' %}">{{user.username}}</a></li>
+                <li><a class="dropdown-item" href="/admin">Administrator</a></li>
+                <li><a class="dropdown-item" href="{% url 'store-page' %}">Site</a></li>
                 <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
               </ul>
             </div>

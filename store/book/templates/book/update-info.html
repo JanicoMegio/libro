@@ -1,4 +1,6 @@
 {% extends 'layout/base.html' %}
+{% load static %}
+{% block title %}{{user.username}} | Update {%endblock%} 
 {% block content %}
 
 <header>
@@ -28,7 +30,7 @@
       <div class="col-lg-4">
         <div class="card mb-4">
           <div class="card-body text-center">
-            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp" alt="avatar"
+            <img src="{% static 'images/user.png'%}"
               class="rounded-circle img-fluid" style="width: 150px;">
             <h5 class="my-3">@{{ user.username }}</h5>
             <p class="text-muted mb-1"></p>
@@ -78,7 +80,6 @@
 						<textarea class="form-control" id="textAreaExample" rows="4" name="address2">{{ info.address2 }}</textarea>
   					   	<label class="form-label" for="textAreaExample">Second Address</label>
 					</div>
-				    
 				  <button type="submit" class="btn btn-dark">Update</button>
 				</form>
             </div>  

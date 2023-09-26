@@ -47,10 +47,6 @@ def stripe_checkout(request):
     return redirect(checkout_session.url, code=303)
 
 
-def home(request):
-    return HttpResponse('hello world')
-
-
 def login_user(request):
     if request.method == "POST":
         username = request.POST.get('username')
@@ -467,17 +463,20 @@ def payment_failed(request):
 
 @login_required(login_url="login")
 def book_detail(request, pk):
-    user = request.user
-    books = Book.objects.get(pk=pk)
-    book_order_item = Order.objects.filter(book_order=pk).count()
-    wish_item = Wishlist.objects.filter(user_name=user, wish_book=pk).first()
-    genres = [genre_list.name for genre_list in books.genre.all()]
-    cart = CartItems.objects.filter(user_name=user).count()
-    related = Book.objects.filter(genre__name__in=genres).order_by("?")[:5]
-    item_review = CustomerReview.objects.filter(item_review__book_order=pk).order_by("-date")[:3]
+    try:
+        user = request.user
+        books = Book.objects.get(pk=pk)
+        book_order_item = Order.objects.filter(book_order=pk).count()
+        wish_item = Wishlist.objects.filter(user_name=user, wish_book=pk).first()
+        genres = [genre_list.name for genre_list in books.genre.all()]
+        related = Book.objects.filter(genre__name__in=genres).order_by("?")[:5]
+        item_review = CustomerReview.objects.filter(item_review__book_order=pk).order_by("-date")[:3]
+    
+    except Book.DoesNotExist:
+        return HttpResponse('Item Not Found!')
+    
     context = {
     'books': books,
-    'cart': cart,
     'wish_item': wish_item,
     'related': related,
     'book_order_item': book_order_item,

@@ -1,5 +1,6 @@
 
 {% extends 'authentication/base.html' %}
+{% block title %} Dashboard {% endblock%}
 {% block content %}
 {% if user.is_superuser %}
 {% include 'layout/admin-navbar.html' %}
